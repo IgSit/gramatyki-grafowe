@@ -9,7 +9,13 @@ class HyperGraph:
         self.nx_graph = self._construct_nx_graph()
         
     def _check_data(self) -> bool:
-        pass
+        node_ids = set(map(lambda x: x[0], self.nodes))
+        for edge in self.edges:
+            for v in edge:
+                if v not in node_ids:
+                    print(f"Edge from unknown node {v} not present in nodes")
+                    return False
+        return True
 
     def _construct_nx_graph(self) -> nx.Graph:
         pass
