@@ -32,7 +32,10 @@ class HyperGraph:
     def _add_hyperedges(self, graph: nx.Graph, hyperedges: list[set[str|int]]):
         assert len(hyperedges) == 1,"WIP: 'Q' must be unique per hyperedge" # FIXME
         for hyperedge in hyperedges:
-            graph.add_node('Q', pos=(2, 2)) # FIXME calculate position from nodes
+            positions = [graph.nodes[v]['pos'] for v in hyperedge]
+            pos_x = (max(map(lambda x: x[0], positions)) - min(map(lambda x: x[0], positions))) / 2
+            pos_y = (max(map(lambda x: x[1], positions)) - min(map(lambda x: x[1], positions))) / 2
+            graph.add_node('Q', pos=(pos_x, pos_y))
             graph.add_edges_from([('Q', v) for v in hyperedge])
 
     def visualize(self):
