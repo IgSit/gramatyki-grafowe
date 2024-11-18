@@ -2,7 +2,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 class HyperGraph:
-    def __init__(self, nodes: list[int], edges: set[int]):
+    def __init__(self, nodes: list[tuple[str|int, dict[str:tuple[float, float]|str]]], edges: set[str|int]):
         self.nodes = nodes
         self.edges = edges
         assert self._check_data(), "Inconsistent hypergraph parametrs"
