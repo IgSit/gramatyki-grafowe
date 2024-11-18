@@ -1,5 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+from networkx.classes import nodes
 
 
 class HyperGraph:
@@ -38,9 +39,14 @@ class HyperGraph:
         return self.nx_graph
 
     def visualize(self) -> None:
+        node_colors = ['#f88fff' if str(node).startswith('Q') else '#8fdfff' for node in self.nx_graph.nodes]
+        edge_colors = ['#f88fff' if any(str(node).startswith('Q') for node in edge) else '#8fdfff'
+                       for edge in self.nx_graph.edges]
         nx.draw(
             self.nx_graph,
             nx.get_node_attributes(self.nx_graph, 'pos'),
+            node_color=node_colors,
+            edge_color=edge_colors,
             with_labels=True
         )
         plt.show()
