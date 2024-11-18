@@ -1,5 +1,6 @@
 import networkx as nx
 import matplotlib.pyplot as plt
+from functools import reduce
 
 class HyperGraph:
     def __init__(self, nodes: list[tuple[str|int, dict[str:tuple[float, float]|str]]], edges: list[set[str|int]]):
@@ -31,10 +32,11 @@ class HyperGraph:
     def _add_hyperedges(self, graph: nx.Graph, hyperedges: list[set[str|int]]):
         assert len(hyperedges) == 1,"WIP: 'Q' must be unique per hyperedge" # FIXME
         for hyperedge in hyperedges:
+            graph.add_node('Q', pos=(2, 2)) # FIXME calculate position from nodes
             graph.add_edges_from([('Q', v) for v in hyperedge])
 
     def visualize(self):
-        nx.draw(self.nx_graph)
+        nx.draw(self.nx_graph, nx.get_node_attributes(self.nx_graph, 'pos'), with_labels=True)
         plt.show()
 
 class Production:
