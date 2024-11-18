@@ -18,7 +18,20 @@ class HyperGraph:
         return True
 
     def _construct_nx_graph(self) -> nx.Graph:
-        pass
+        graph = nx.Graph()
+        graph.add_nodes_from(self.nodes)
+
+        edges = list(map(tuple, filter(lambda x: len(x) == 2, self.edges)))
+        graph.add_edges_from(edges)
+
+        hyperedges = list(filter(lambda x: len(x) > 2, self.edges))
+        self._add_hyperedges(graph, hyperedges)
+        return graph
+
+    def _add_hyperedges(self, graph: nx.Graph, hyperedges: list[set[str|int]]):
+        assert len(hyperedges) == 1,"WIP: 'Q' must be unique per hyperedge" # FIXME
+        for hyperedge in hyperedges:
+            graph.add_edges_from([('Q', v) for v in hyperedge])
 
     def visualize(self):
         nx.draw(self.nx_graph)
@@ -36,9 +49,13 @@ class Production:
 
 if __name__ == "__main__":
     # nx test
-    graph = nx.Graph()
-    graph.add_nodes_from([('v1', {'pos':(0, 0)}),('v2', {'pos':(4, 0)}),('v3', {'pos':(4, 4)}),('v4', {'pos':(0, 4)}),('q', {'pos':(2, 2)})])
-    graph.add_edges_from([('v1','v2'),('v2','v3'),('v3', 'v4'), ('v4','v1')])
-    graph.add_edges_from([('v1','q'),('v2','q'),('v3', 'q'), ('v4', 'q')])
-    nx.draw(graph, nx.get_node_attributes(graph, 'pos'), with_labels=True)
-    plt.show()
+    # graph = nx.Graph()
+    # graph.add_nodes_from([('v1', {'pos':(0, 0)}),('v2', {'pos':(4, 0)}),('v3', {'pos':(4, 4)}),('v4', {'pos':(0, 4)}),('q', {'pos':(2, 2)})])
+    # graph.add_edges_from([('v1','v2'),('v2','v3'),('v3', 'v4'), ('v4','v1')])
+    # graph.add_edges_from([('v1','q'),('v2','q'),('v3', 'q'), ('v4', 'q')])
+    # nx.draw(graph, nx.get_node_attributes(graph, 'pos'), with_labels=True)
+    # plt.show()
+    hypergraph = HyperGraph(
+        nodes=[('v1', {'pos':(0, 0)}),('v2', {'pos':(4, 0)}),('v3', {'pos':(4, 4)}),('v4', {'pos':(0, 4)})],
+        edges=[{'v1','v2'},{'v2','v3'},{'v3', 'v4'}, {'v4','v1'}, {'v1','v2','v3','v4'}])
+    hypergraph.visualize()
