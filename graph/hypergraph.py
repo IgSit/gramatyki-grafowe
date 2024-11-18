@@ -49,6 +49,9 @@ class HyperGraph:
         names = [f"v{i}" for i in range(cnt, cnt + how_many)]
         self._node_cnt += how_many
         return names
+    
+    def get_node_attributes(self, node_id: str): # TODO: change self.nodes to dict
+        return tuple(filter(lambda x: x[0] == node_id, self.nodes))[0][1]
 
     def extend(self,
                nodes: list[tuple[str, dict]],

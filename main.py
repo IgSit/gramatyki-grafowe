@@ -1,4 +1,5 @@
 from graph.hypergraph import HyperGraph
+from productions.p1 import P1
 
 if __name__ == "__main__":
     # nx test
@@ -10,17 +11,20 @@ if __name__ == "__main__":
     # plt.show()
     hyper_graph = HyperGraph(
         nodes=[
-            ('v0', {'pos':(0, 0)}),
-            ('v1', {'pos':(4, 0)}),
-            ('v2', {'pos':(4, 4)}),
-            ('v3', {'pos':(0, 4)})
+            ('v1', {'pos':(0, 0), 'h':0}),
+            ('v2', {'pos':(4, 0), 'h':0}),
+            ('v3', {'pos':(4, 4), 'h':0}),
+            ('v4', {'pos':(0, 4), 'h':0}),
+            ('v5', {'pos':(4, 2), 'h':1})
         ],
         edges=[
-            ({'v0','v1'}, {}),
-            ({'v1','v2'}, {}),
-            ({'v2', 'v3'}, {}),
-            ({'v3','v0'}, {}),
-            ({'v0','v1','v2','v3'}, {})
+            ({'v1','v2'}, {'label':'E', 'B':'B1'}),
+            ({'v2','v5'}, {'label':'E', 'B':'B2'}),
+            ({'v5','v3'}, {'label':'E', 'B':'B2'}),
+            ({'v3', 'v4'}, {'label':'E', 'B':'B3'}),
+            ({'v4','v1'}, {'label':'E', 'B':'B4'}),
+            ({'v1','v2','v3','v4'}, {'label':'Q', 'B':0, 'R':1})
         ]
     )
-    hyper_graph.visualize()
+    # hyper_graph.visualize()
+
