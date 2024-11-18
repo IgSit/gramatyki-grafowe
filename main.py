@@ -1,4 +1,4 @@
-from hypergraph import HyperGraph
+from graph.hypergraph import HyperGraph
 
 if __name__ == "__main__":
     # nx test
@@ -10,17 +10,17 @@ if __name__ == "__main__":
     # plt.show()
     hyper_graph = HyperGraph(
         nodes=[
-            ('v1', {'pos':(0, 0)}),
-            ('v2', {'pos':(4, 0)}),
-            ('v3', {'pos':(4, 4)}),
-            ('v4', {'pos':(0, 4)})
+            ('v0', {'pos':(0, 0)}),
+            ('v1', {'pos':(4, 0)}),
+            ('v2', {'pos':(4, 4)}),
+            ('v3', {'pos':(0, 4)})
         ],
         edges=[
-            ({'v1','v2'}, dict()),
-            ({'v2','v3'}, dict()),
-            ({'v3', 'v4'}, dict()),
-            ({'v4','v1'}, dict()),
-            ({'v1','v2','v3','v4'}, dict())
+            ({'v0','v1'}, {}),
+            ({'v1','v2'}, {}),
+            ({'v2', 'v3'}, {}),
+            ({'v3','v0'}, {}),
+            ({'v0','v1','v2','v3'}, {})
         ]
     )
     hyper_graph.visualize()

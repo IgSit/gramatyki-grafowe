@@ -1,6 +1,5 @@
 import networkx as nx
 import matplotlib.pyplot as plt
-from networkx.classes import nodes
 
 
 class HyperGraph:
@@ -8,29 +7,53 @@ class HyperGraph:
         Class overlay for nx graph. \n
         **nodes** - list of all nodes in the graph with params
         single node is a tuple:
-            - node_id - str/int
-            - dict of attributes: attr_name (str) -> attr_value (str/int)
+            - node_id - str
+            - dict of attributes: attr_name (str) -> attr_value (any)
         edges - list of all edges in the graph with params
         single edge is a tuple:
             - (node_id, node_id) - from/to nodes - potentially more node ids are supported (for hyper-vertices)
-            - dict of attributes: attr_name (str) -> attr_value (str/int)
+            - dict of attributes: attr_name (str) -> attr_value (any)
 
         **Convention:** Q* node ids are reserved for hyper-nodes, do not use them.
     """
 
     def __init__(self,
-                 nodes: list[tuple[str | int, dict[str:tuple[float, float] | str]]],
-                 edges: list[tuple[set[str | int]], dict[str: str | int]]):
+                 nodes: list[tuple[str, dict]],
+                 edges: list[tuple[set[str], dict]]):
         self.nodes = nodes
         self.edges = edges
         self._hyper_node_cnt = 0
+        self._node_cnt = len(nodes)
 
         assert self._check_data(self.nodes, self.edges), "Inconsistent hyper-graph parameters"
         self._construct_nx_graph()
 
+    @classmethod
+    def is_hyper_node(cls, node):
+        return str(node).startswith('Q')
+
+    def is_hanging_node(self, node) -> bool:
+        pass
+
+    def is_breakable(self, node) -> bool:
+        pass
+
+    def get_neighbours(self, node):
+        return self.nx_graph.neighbors(node)
+
+    def get_next(self, how_many: int) -> list[str]:
+        """
+            Get names (ids) for x new nodes to be created.
+        """
+        cnt = self._node_cnt
+        names = [f"v{i}" for i in range(cnt, cnt + how_many)]
+        self._node_cnt += how_many
+        return names
+
     def extend(self,
-               nodes: list[tuple[str | int, dict[str:tuple[float, float] | str]]],
-               edges: list[tuple[set[str | int]], dict[str: str | int]]) -> nx.Graph:
+               nodes: list[tuple[str, dict]],
+               edges: list[tuple[set[str], dict]]) -> nx.Graph:
+        self._node_cnt += len(nodes)
         self.nodes.extend(nodes)
         self.edges.extend(edges)
         assert self._check_data(self.nodes, self.edges), "Inconsistent hyper-graph parameters"
@@ -39,8 +62,8 @@ class HyperGraph:
         return self.nx_graph
 
     def visualize(self) -> None:
-        node_colors = ['#f88fff' if str(node).startswith('Q') else '#8fdfff' for node in self.nx_graph.nodes]
-        edge_colors = ['#f88fff' if any(str(node).startswith('Q') for node in edge) else '#8fdfff'
+        node_colors = ['#f88fff' if self.is_hyper_node(node) else '#8fdfff' for node in self.nx_graph.nodes]
+        edge_colors = ['#f88fff' if any(self.is_hyper_node(node) for node in edge) else '#8fdfff'
                        for edge in self.nx_graph.edges]
         nx.draw(
             self.nx_graph,
@@ -78,8 +101,7 @@ class HyperGraph:
         hyper_edges = list(filter(lambda x: len(x[0]) > 2, edges))
         self._add_hyper_edges(hyper_edges)
 
-    def _add_hyper_edges(self,
-                         hyper_edges: list[tuple[set[str | int], dict[str:str]]]) -> None:
+    def _add_hyper_edges(self, hyper_edges) -> None:
         """
         Hyper-edges should be created within one hyper-vertex (automatically added). If you need to create multiple
         hyper-edges with different hyper-vertices, you should call this method several times.
