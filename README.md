@@ -36,8 +36,14 @@ hyper_graph1 = HyperGraph(
 
 - HyperGraph ma metody `extend(nodes, edges)` oraz `shrink(nodes, edges)`, odpowiednio dodają i usuwają elementy grafu. Uwaga: ta pierwsza wymaga słownika atrybutów (nawet pustego), ta druga już tylko samych id.
 - Metoda `visualize()` rysuje graf.
+- Pole `graph.nx_graph` daje dostęp do reprezentacji w networkx. READ ONLY. Nie wolno przeprowadzać modyfikacji bezpośrednio na tym obiekcie, ponieważ wprowadzi to różnice względem innych kolekcji obiektu.
+
+### Produkcje
+Każdą produkcję umieszczamy w dedykowanym pliku w katalogu productions.
+Należy dziedziczyć po abstrakcyjnej klasie `Production` i zaimplementować `check(graph, node)` oraz `apply(graph, node)`.
+
 
 ### Testy
-Testy umieszczamy w katalogu tests
+Testy umieszczamy w katalogu tests.
 
 
