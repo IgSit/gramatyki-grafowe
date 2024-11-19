@@ -24,7 +24,6 @@ class HyperGraph:
         self.hyper_nodes = list()
         self.edges = edges
         self._hyper_node_cnt = 0
-        # self._node_cnt = len(nodes)
 
         assert self._check_data(self.nodes, self.edges), "Inconsistent hyper-graph parameters"
         self._construct_nx_graph()
@@ -40,6 +39,10 @@ class HyperGraph:
     def is_breakable(self, node_id: str) -> bool:
         r = self.nx_graph.nodes[node_id].get('R')
         return r if r is not None else False
+    
+    def is_on_border(self, edge: tuple[str, str]):
+        b = self.nx_graph.edges[*edge].get('B')
+        return b if b is not None else False
 
     def get_neighbours(self, node):
         return self.nx_graph.neighbors(node)
@@ -64,9 +67,13 @@ class HyperGraph:
         self._remove_edges(edges)
         self.nx_graph.remove_nodes_from(nodes)
 
+    def calculate_mean_node_position(self, nodes) -> tuple[float, float]:
+        positions = [self.nx_graph.nodes[n]['pos'] for n in nodes]
+        return sum(p[0] for p in positions) / len(nodes), sum(p[1] for p in positions) / len(nodes)
+
     def visualize(self) -> None:
         node_colors = ['#f88fff' if self.is_hyper_node(node) else '#8fdfff' for node in self.nx_graph.nodes]
-        edge_colors = ['#f88fff' if any(self.is_hyper_node(node) for node in edge) else '#8fdfff'
+        edge_colors = ['#f88fff' if any(self.is_hyper_node(node) for node in edge) else ('#135210' if self.is_on_border(edge) else '#8fdfff')
                        for edge in self.nx_graph.edges]
         nx.draw(
             self.nx_graph,
@@ -127,7 +134,7 @@ class HyperGraph:
             self.nx_graph.add_edges_from([(hyper_vertex_id, v, attributes) for v in hyper_edge])
 
     def _remove_hyper_edges(self, hyper_edges) -> None:
-        for hyper_edge, attributes in hyper_edges:
+        for hyper_edge in hyper_edges:
             hyper_vertex_id = self._find_hyper_node(hyper_edge)
             self.nx_graph.remove_node(hyper_vertex_id)
             self.hyper_nodes.remove(hyper_vertex_id)

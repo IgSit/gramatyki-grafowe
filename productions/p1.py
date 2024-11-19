@@ -30,6 +30,18 @@ class P1(Production):
         return self._is_square(graph, hyper_node, neighbours) and self._predicate(graph, hyper_node, neighbours)
 
     def apply(self, graph: HyperGraph, hyper_node: str) -> HyperGraph:
+        neighbours = tuple(graph.get_neighbours(hyper_node))
+        subgraph_edges = tuple(nx.subgraph(graph.nx_graph, neighbours).edges)
+        graph.shrink(nodes=[], edges=[
+            set(neighbours), # remove hyperedge
+            *(set(edge) for edge in subgraph_edges) # remove other edges
+        ])
+        new_nodes_pos = [graph.calculate_mean_node_position(edge) for edge in subgraph_edges] + [graph.calculate_mean_node_position(neighbours)]
+        new_nodes = list(map(lambda x: (f'a{x}', {'pos':x, 'h':False}), new_nodes_pos))
+        graph.extend(
+            nodes=new_nodes, 
+            edges=[] # TODO: create new edges
+        )
         return graph
 
     def _predicate(self, graph: HyperGraph, hyper_node: str, neighbours: list[str]):
