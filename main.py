@@ -4,19 +4,19 @@ from productions.p1 import P1
 if __name__ == "__main__":
     hyper_graph = HyperGraph(
         nodes=[
-            ('v1', {'pos': (0, 0), 'h': 0}),
-            ('v2', {'pos': (4, 0), 'h': 0}),
-            ('v3', {'pos': (4, 4), 'h': 0}),
-            ('v4', {'pos': (0, 4), 'h': 0}),
-            ('v5', {'pos': (4, 2), 'h': 1})
+            ('v1', {'pos': (0, 0), 'h': False}),
+            ('v2', {'pos': (4, 0), 'h': False}),
+            ('v3', {'pos': (4, 4), 'h': False}),
+            ('v4', {'pos': (0, 4), 'h': False}),
+            ('v5', {'pos': (4, 2), 'h': True})
         ],
         edges=[
-            ({'v1', 'v2'}, {'label': 'E', 'B': 'B1'}),
-            ({'v2', 'v5'}, {'label': 'E', 'B': 'B2'}),
-            ({'v5', 'v3'}, {'label': 'E', 'B': 'B2'}),
-            ({'v3', 'v4'}, {'label': 'E', 'B': 'B3'}),
-            ({'v4', 'v1'}, {'label': 'E', 'B': 'B4'}),
-            ({'v1', 'v2', 'v3', 'v4'}, {'label': 'Q', 'B': 0, 'R': 1})
+            ({'v1', 'v2'}, {'label': 'E', 'B': True}),
+            ({'v2', 'v5'}, {'label': 'E', 'B': True}),
+            ({'v5', 'v3'}, {'label': 'E', 'B': True}),
+            ({'v3', 'v4'}, {'label': 'E', 'B': True}),
+            ({'v4', 'v1'}, {'label': 'E', 'B': True}),
+            ({'v1', 'v2', 'v3', 'v4'}, {'label': 'Q', 'R': 1})
         ]
     )
     hyper_graph.visualize()
@@ -31,3 +31,5 @@ if __name__ == "__main__":
                 hyper_graph = production.apply(hyper_graph)
                 hyper_graph.visualize()
                 break
+
+    print(hyper_graph.is_hanging_node('v1'))

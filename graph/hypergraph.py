@@ -34,12 +34,13 @@ class HyperGraph:
     def is_hyper_node(cls, node):
         return str(node).startswith('Q')
 
-    def is_hanging_node(self, node) -> bool:
-        # return self.nx_graph[node]['h'] == 1 or else False - sth like that
-        pass
+    def is_hanging_node(self, node_id: str) -> bool:
+        h = self.nx_graph.nodes[node_id]['h']
+        return h if h is not None else False
 
-    def is_breakable(self, node) -> bool:
-        pass
+    def is_breakable(self, node_id: str) -> bool:
+        h = self.nx_graph.nodes[node_id]['B']
+        return h if h is not None else False
 
     def get_neighbours(self, node):
         return self.nx_graph.neighbors(node)
