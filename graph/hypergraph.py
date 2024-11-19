@@ -21,7 +21,9 @@ class HyperGraph:
                  nodes: list[tuple[str, dict]],
                  edges: list[tuple[set[str], dict]]):
         self.nodes = nodes
+        self.hyper_nodes = list()
         self.edges = edges
+        self.graph_level = 0
         self._hyper_node_cnt = 0
         self._node_cnt = len(nodes)
 
@@ -33,6 +35,7 @@ class HyperGraph:
         return str(node).startswith('Q')
 
     def is_hanging_node(self, node) -> bool:
+        # return self.nx_graph[node]['h'] == 1 or else False - sth like that
         pass
 
     def is_breakable(self, node) -> bool:
@@ -49,9 +52,6 @@ class HyperGraph:
         names = [f"v{i}" for i in range(cnt, cnt + how_many)]
         self._node_cnt += how_many
         return names
-    
-    def get_node_attributes(self, node_id: str): # TODO: change self.nodes to dict
-        return tuple(filter(lambda x: x[0] == node_id, self.nodes))[0][1]
 
     def extend(self,
                nodes: list[tuple[str, dict]],
@@ -120,4 +120,7 @@ class HyperGraph:
             self._hyper_node_cnt += 1
             hyper_vertex_id = f"Q{self._hyper_node_cnt}"
             self.nx_graph.add_node(hyper_vertex_id, pos=(pos_x, pos_y))
+            new_hyper_node = self.nx_graph.nodes[hyper_vertex_id]
+            new_hyper_node['level'] = self.graph_level
+            self.hyper_nodes.append(new_hyper_node)
             self.nx_graph.add_edges_from([(hyper_vertex_id, v, attributes) for v in hyper_edge])
