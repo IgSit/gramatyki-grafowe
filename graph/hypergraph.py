@@ -14,7 +14,7 @@ class HyperGraph:
             - (node_id, node_id) - from/to nodes - potentially more node ids are supported (for hyper-vertices)
             - dict of attributes: attr_name (str) -> attr_value (any)
 
-        **Convention:** Q* node ids are reserved for hyper-nodes, do not use them.
+        **Convention:** X* node ids are reserved for hyper-nodes, do not use them.
     """
 
     def __init__(self,
@@ -23,7 +23,6 @@ class HyperGraph:
         self.nodes = nodes
         self.hyper_nodes = list()
         self.edges = edges
-        self.graph_level = 0
         self._hyper_node_cnt = 0
         self._node_cnt = len(nodes)
 
@@ -32,15 +31,15 @@ class HyperGraph:
 
     @classmethod
     def is_hyper_node(cls, node):
-        return str(node).startswith('Q')
+        return str(node).startswith('X')
 
     def is_hanging_node(self, node_id: str) -> bool:
-        h = self.nx_graph.nodes[node_id]['h']
+        h = self.nx_graph.nodes[node_id].get('h')
         return h if h is not None else False
 
     def is_breakable(self, node_id: str) -> bool:
-        h = self.nx_graph.nodes[node_id]['B']
-        return h if h is not None else False
+        r = self.nx_graph.nodes[node_id].get('R')
+        return r if r is not None else False
 
     def get_neighbours(self, node):
         return self.nx_graph.neighbors(node)
@@ -119,9 +118,7 @@ class HyperGraph:
             pos_x = (max(map(lambda x: x[0], positions)) - min(map(lambda x: x[0], positions))) / 2
             pos_y = (max(map(lambda x: x[1], positions)) - min(map(lambda x: x[1], positions))) / 2
             self._hyper_node_cnt += 1
-            hyper_vertex_id = f"Q{self._hyper_node_cnt}"
-            self.nx_graph.add_node(hyper_vertex_id, pos=(pos_x, pos_y))
-            new_hyper_node = self.nx_graph.nodes[hyper_vertex_id]
-            new_hyper_node['level'] = self.graph_level
-            self.hyper_nodes.append(new_hyper_node)
+            hyper_vertex_id = f"X{self._hyper_node_cnt}"
+            self.nx_graph.add_node(hyper_vertex_id, pos=(pos_x, pos_y), **attributes)
+            self.hyper_nodes.append(hyper_vertex_id)
             self.nx_graph.add_edges_from([(hyper_vertex_id, v, attributes) for v in hyper_edge])

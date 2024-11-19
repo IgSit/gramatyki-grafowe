@@ -1,5 +1,6 @@
 from graph.hypergraph import HyperGraph
 from productions.p1 import P1
+import networkx as nx
 
 if __name__ == "__main__":
     hyper_graph = HyperGraph(
@@ -16,20 +17,30 @@ if __name__ == "__main__":
             ({'v5', 'v3'}, {'label': 'E', 'B': True}),
             ({'v3', 'v4'}, {'label': 'E', 'B': True}),
             ({'v4', 'v1'}, {'label': 'E', 'B': True}),
-            ({'v1', 'v2', 'v3', 'v4'}, {'label': 'Q', 'R': 1})
+            ({'v1', 'v2', 'v3', 'v4'}, {'label': 'Q', 'R': True})
         ]
     )
-    hyper_graph.visualize()
+    hyper_graph2 = HyperGraph(
+        nodes=[
+            ('v11', {'pos': (0, 0), 'h': False}),
+            ('v12', {'pos': (4, 0), 'h': False}),
+            ('v13', {'pos': (4, 4), 'h': False}),
+            ('v14', {'pos': (0, 4), 'h': False})
+        ],
+        edges=[
+            ({'v11', 'v12'}, {'label': 'E', 'B': True}),
+            ({'v12', 'v13'}, {'label': 'E', 'B': True}),
+            ({'v13', 'v14'}, {'label': 'E', 'B': True}),
+            ({'v14', 'v11'}, {'label': 'E', 'B': True}),
+            ({'v11', 'v12', 'v13', 'v14'}, {'label': 'Q', 'R': True})
+        ]
+    )
 
     productions = [P1()]
 
-    for level in range(1, 4):
-        for production in productions:
-            node = production.check(hyper_graph, level)  # TODO change to while loop - returns first found, not all
-            # TODO or change so it returns all found
-            if node:
-                hyper_graph = production.apply(hyper_graph)
-                hyper_graph.visualize()
+    for production in productions:
+        for hyper_node in hyper_graph2.hyper_nodes:
+            if production.check(hyper_graph2, hyper_node):
+                hyper_graph2 = production.apply(hyper_graph2, hyper_node)
+                hyper_graph2.visualize()
                 break
-
-    print(hyper_graph.is_hanging_node('v1'))

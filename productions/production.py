@@ -7,8 +7,8 @@ class Production(ABC):
     def __init__(self):
         pass
 
-    def check(self, graph: HyperGraph, level: int):
+    def check(self, graph: HyperGraph, hyper_node: str) -> bool:
         pass
 
-    def apply(self, graph: HyperGraph) -> HyperGraph:
+    def apply(self, graph: HyperGraph, hyper_node: str) -> HyperGraph:
         pass
