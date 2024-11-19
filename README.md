@@ -10,7 +10,7 @@
 
 - Nazwy wierzchołków są ich id, więc muszą być unikatowe. 
 - Konwencja jest taka że muszą to być stringi.
-- Atrybuty podajemy w słowniku w tej samej krotce.
+- Atrybuty podajemy w słowniku w tej samej krotce, atrybut `'pos': tuple[float, float]` (współrzędne) jest wymagany dla node.
 - Nazwa X* jest zarezerwowana dla generycznych wierzchołków zastępujących hiperkrawędzie.
 
 Konstrukcja przykładowego hipergrafu:
