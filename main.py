@@ -38,9 +38,26 @@ if __name__ == "__main__":
 
     productions = [P1()]
 
-    for production in productions:
-        for hyper_node in hyper_graph2.hyper_nodes:
-            if production.check(hyper_graph2, hyper_node):
-                hyper_graph2 = production.apply(hyper_graph2, hyper_node)
-                hyper_graph2.visualize()
-                break
+    # for production in productions:
+    #     for hyper_node in hyper_graph2.hyper_nodes:
+    #         if production.check(hyper_graph2, hyper_node):
+    #             hyper_graph2 = production.apply(hyper_graph2, hyper_node)
+    #             hyper_graph2.visualize()
+    #             break
+    hyper_graph.visualize()
+    hyper_graph.extend(
+        nodes=[
+            ('v11', {'pos': (6, 0), 'h': False}),
+            ('v12', {'pos': (1, 6), 'h': False})
+        ],
+        edges=[
+            ({'v1', 'v12'}, {'label': 'E', 'B': True}),
+            ({'v11', 'v2'}, {'label': 'E', 'B': True})
+        ]
+    )
+    hyper_graph.visualize()
+    hyper_graph.shrink(
+        nodes=['v11'],
+        edges=[{'v11', 'v2'}]
+    )
+    hyper_graph.visualize()
