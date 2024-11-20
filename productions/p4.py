@@ -89,8 +89,8 @@ class P4(Production):
         e_v5_v1234 = ({v5, v1234[0]}, {})
         e_v34_v1234 = ({v34[0], v1234[0]}, {})
 
-        graph.set_note_attrs(v5, {"h": False})
-        graph.set_note_attrs(v6, {"h": False})
+        graph.set_node_attrs(v5, {"h": False})
+        graph.set_node_attrs(v6, {"h": False})
 
         graph.shrink(
             nodes=[],
