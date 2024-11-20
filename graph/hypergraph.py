@@ -129,7 +129,7 @@ class HyperGraph:
         for hyper_edge, attributes in hyper_edges:
             self._hyper_node_cnt += 1
             hyper_vertex_id = f"X{self._hyper_node_cnt}"
-            self.nx_graph.add_node(hyper_vertex_id, pos=self._calculate_hyper_node_position(hyper_edge), **attributes)
+            self.nx_graph.add_node(hyper_vertex_id, pos=self.calculate_mean_node_position(hyper_edge), **attributes)
             self.hyper_nodes.append(hyper_vertex_id)
             self.nx_graph.add_edges_from([(hyper_vertex_id, v, attributes) for v in hyper_edge])
 
@@ -144,9 +144,3 @@ class HyperGraph:
             if tuple(sorted(self.nx_graph.neighbors(hyper_node))) == tuple(sorted(hyper_edge)):
                 return hyper_node
         return None
-
-    def _calculate_hyper_node_position(self, hyper_edge) -> tuple[float, float]:
-        positions = [self.nx_graph.nodes[v]['pos'] for v in hyper_edge]
-        pos_x = (max(map(lambda x: x[0], positions)) - min(map(lambda x: x[0], positions))) / 2
-        pos_y = (max(map(lambda x: x[1], positions)) - min(map(lambda x: x[1], positions))) / 2
-        return pos_x, pos_y
