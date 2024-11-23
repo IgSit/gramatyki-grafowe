@@ -72,11 +72,11 @@ class P3(Production):
         v4 = [n for n in nx.common_neighbors(graph.nx_graph, v1, v3) if n != hyper_node][0]
 
         pos = graph.calculate_mean_node_position((v1, v4))
-        v14 = (f"v{pos}", {"pos": graph.calculate_mean_node_position((v1, v4))})
+        v14 = (f"v{pos}", {"pos": pos})
         pos = graph.calculate_mean_node_position((v3, v4))
-        v34 = (f"v{pos}", {"pos": graph.calculate_mean_node_position((v3, v4))})
+        v34 = (f"v{pos}", {"pos": pos})
         pos = graph.calculate_mean_node_position((v1, v2, v3, v4))
-        v1234 = (f"v{pos}", {"pos": graph.calculate_mean_node_position((v1, v2, v3, v4))})
+        v1234 = (f"v{pos}", {"pos": pos})
 
         e_v1_v14 = ({v1, v14[0]}, {"B": graph.nx_graph.get_edge_data(v1, v4)["B"]})
         e_v14_v4 = ({v14[0], v4}, {"B": graph.nx_graph.get_edge_data(v1, v4)["B"]})
