@@ -126,14 +126,34 @@ class P11(Production):
 
         later_edges_to_add = []
 
+        vertices_added = []
+
+        linked_to_center = []
+
+        for v in vertices_to_add:
+            vertices_added.append(v[0])
+
         for v in hypernode_neigh_vertices:
             neigh_vertices = graph.get_neighbours(v)
+            # neighbor should be either:
+            # 1 - just added - see vertices_to_add
+            # 2 - already in the graph - something1, something2
+
             # there will be 2 - each should be connected to new center here
             nv_list = list(neigh_vertices)
+            nvs_to_add = []
             for nv in nv_list:
-                later_edges_to_add.append(({nv, center_vertice_name}, {'label': 'E', 'B': True}))
-                print(nv)
-            later_edges_to_add.append(({v, nv_list[0], center_vertice_name, nv_list[1]}, {'label': 'Q', 'R': False}))
+                if nv in [*vertices_added, something1, something2]:
+                    # prevent multiple edges on the bordering lines
+                    if nv not in linked_to_center:
+                        later_edges_to_add.append(({nv, center_vertice_name}, {'label': 'E', 'B': True}))
+                        linked_to_center.append(nv)
+                    nvs_to_add.append(nv)
+            if len(nvs_to_add) == 2:
+                later_edges_to_add.append(
+                    ({v, nvs_to_add[0], center_vertice_name, nvs_to_add[1]}, {'label': 'Q', 'R': False}))
+            else:
+                print(nvs_to_add)
 
         graph.extend(nodes=[], edges=[*later_edges_to_add])
 

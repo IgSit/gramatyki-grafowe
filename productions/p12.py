@@ -134,9 +134,9 @@ class P12(Production):
         for v in vertices_to_add:
             vertices_added.append(v[0])
 
-        print(vertices_added)
-        print(something1, something2)
-        print([*vertices_added, something1, something2])
+        # print(vertices_added)
+        # print(something1, something2)
+        # print([*vertices_added, something1, something2])
         linked_to_center = []
 
         for v in hypernode_neigh_vertices:
