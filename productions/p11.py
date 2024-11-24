@@ -71,14 +71,30 @@ class P11(Production):
         #something is a WIP name - will stay until someone finds a better one
         print(something1, something2, edges_to_ignore)
 
+
+        #set h to false when needed
+        idx_to_set_h = []
+
+        for idx, node in enumerate(graph.nodes):
+            if node[0] == something1 or node[0] == something2:
+                idx_to_set_h.append(idx)
+
+        for idx in idx_to_set_h:
+            print(graph.nodes[idx])
+            vertice = graph.nodes[idx][0]
+            attrs = graph.nodes[idx][1]
+            attrs['h'] = False
+            graph.nodes[idx] = (vertice, attrs)
+
+        print(graph.nodes)
+
         #add new vertices between "non-special" vertices
         subgraph_edges = set(nx.subgraph(graph.nx_graph, hypernode_neigh_vertices).edges)
         set_subgraph_edges = (set(edge) for edge in subgraph_edges)
-        print(subgraph_edges)
-        print(set_subgraph_edges)
-        #remove hyperedges, "regular" edges
-        graph.shrink(nodes=[], edges=[set(hypernode_neigh_vertices), *set_subgraph_edges])
 
+        print(graph.edges)
+
+        #remove hyperedges, "regular" edges
         vertices_to_add = []
         edges_to_add = []
 
@@ -87,16 +103,39 @@ class P11(Production):
             print(v1, v2)
             new_vertice_pos = graph.calculate_mean_node_position([v1, v2])
             new_vertice_name = 'v' + str(new_vertice_pos)
+            old_edge, old_edge_attr = self.__get_edge(graph, v1, v2)
             vertices_to_add.append((new_vertice_name, {"h": False, "pos": new_vertice_pos}))
+            edges_to_add.append(({v1, new_vertice_name}, {'label': 'E', 'B': old_edge_attr["B"]}))
+            edges_to_add.append(({new_vertice_name, v2}, {'label': 'E', 'B': old_edge_attr["B"]}))
 
-            edges_to_add.append(({v1, new_vertice_name}, {'label': 'E', 'B': False}))
-            edges_to_add.append(({new_vertice_name, v2}, {'label': 'E', 'B': False}))
+        center_vertice_pos = graph.calculate_mean_node_position(list(graph.get_neighbours(hyper_node)))
+        center_vertice_name = 'v' + str(center_vertice_pos)
+        vertices_to_add.append((center_vertice_name, {"pos": center_vertice_pos, "h": 0}))
 
         print(vertices_to_add)
         print(edges_to_add)
 
+        graph.shrink(nodes=[], edges=[set(hypernode_neigh_vertices), *set_subgraph_edges])
         graph.extend(nodes=[*vertices_to_add], edges=[])
         graph.extend(nodes=[], edges=[*edges_to_add])
+
+        #replace
+
+        # now - all neighbors of "preexisting" nodes have to be connected to the center v
+        # and we need to create hypergraphs for each
+
+        later_edges_to_add = []
+
+        for v in hypernode_neigh_vertices:
+            neigh_vertices = graph.get_neighbours(v)
+            # there will be 2 - each should be connected to new center here
+            nv_list = list(neigh_vertices)
+            for nv in nv_list:
+                later_edges_to_add.append(({nv, center_vertice_name}, {'label': 'E', 'B': True}))
+                print(nv)
+            later_edges_to_add.append(({v, nv_list[0], center_vertice_name, nv_list[1]}, {'label': 'Q', 'R': False}))
+
+        graph.extend(nodes=[], edges=[*later_edges_to_add])
 
         return graph
 
@@ -184,3 +223,8 @@ class P11(Production):
         edges_to_ignore = [{incomplete_vertices[0], something1}, {something1, missing_vertice}, {missing_vertice, something2}, {something2, incomplete_vertices[1]}]
 
         return something1, something2, edges_to_ignore
+
+    def __get_edge(self, graph, v1, v2):
+        for edge in graph.edges:
+            if len(edge[0]) == 2 and v1 in edge[0] and v2 in edge[0]:
+                return edge[0], edge[1]
