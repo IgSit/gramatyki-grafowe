@@ -19,7 +19,7 @@ class TestP1():
                 ({'v2', 'v5'}, {'label': 'E', 'B': True}),
                 ({'v5', 'v3'}, {'label': 'E', 'B': True}),
                 ({'v3', 'v4'}, {'label': 'E', 'B': True}),
-                ({'v4', 'v1'}, {'label': 'E', 'B': True}),
+                ({'v4', 'v6'}, {'label': 'E', 'B': True}),
                 ({'v1', 'v2', 'v3', 'v4'}, {'label': 'Q', 'R': True})
             ]
         )
