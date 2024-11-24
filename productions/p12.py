@@ -64,6 +64,7 @@ class P12(Production):
 
     def apply(self, graph: HyperGraph, hyper_node: str) -> HyperGraph:
         hypernode_neigh_vertices = tuple(graph.get_neighbours(hyper_node))
+        print(hypernode_neigh_vertices)
         incomplete_vertices, _ = self.__get_incomplete_vertices(graph, hyper_node)
         print(incomplete_vertices)
         unconnected_vertices = self.get_unconnected_vertices(graph, hypernode_neigh_vertices, incomplete_vertices)
@@ -81,19 +82,20 @@ class P12(Production):
                 idx_to_set_h.append(idx)
 
         for idx in idx_to_set_h:
-            print(graph.nodes[idx])
+            # print(graph.nodes[idx])
             vertice = graph.nodes[idx][0]
             attrs = graph.nodes[idx][1]
             attrs['h'] = False
             graph.nodes[idx] = (vertice, attrs)
 
-        print(graph.nodes)
+        # print(graph.nodes)
 
         #add new vertices between "non-special" vertices
         subgraph_edges = set(nx.subgraph(graph.nx_graph, hypernode_neigh_vertices).edges)
         set_subgraph_edges = (set(edge) for edge in subgraph_edges)
+        # print(list(subgraph_edges))
 
-        print(graph.edges)
+        # print(graph.edges)
 
         #remove hyperedges, "regular" edges
         vertices_to_add = []
@@ -101,7 +103,7 @@ class P12(Production):
 
         #create nodes between those removed
         for v1, v2 in subgraph_edges:
-            print(v1, v2)
+            # print(v1, v2)
             new_vertice_pos = graph.calculate_mean_node_position([v1, v2])
             new_vertice_name = 'v' + str(new_vertice_pos)
             old_edge, old_edge_attr = self.__get_edge(graph, v1, v2)
@@ -113,8 +115,8 @@ class P12(Production):
         center_vertice_name = 'v' + str(center_vertice_pos)
         vertices_to_add.append((center_vertice_name, {"pos": center_vertice_pos, "h": 0}))
 
-        print(vertices_to_add)
-        print(edges_to_add)
+        # print(vertices_to_add)
+        # print(edges_to_add)
 
         graph.shrink(nodes=[], edges=[set(hypernode_neigh_vertices), *set_subgraph_edges])
         graph.extend(nodes=[*vertices_to_add], edges=[])
@@ -126,15 +128,39 @@ class P12(Production):
         # and we need to create hypergraphs for each
 
         later_edges_to_add = []
+        # print(vertices_to_add)
+
+        vertices_added = []
+        for v in vertices_to_add:
+            vertices_added.append(v[0])
+
+        print(vertices_added)
+        print(something1, something2)
+        print([*vertices_added, something1, something2])
+        linked_to_center = []
 
         for v in hypernode_neigh_vertices:
             neigh_vertices = graph.get_neighbours(v)
+            # neighbor should be either:
+            # 1 - just added - see vertices_to_add
+            # 2 - already in the graph - something1, something2
+
             # there will be 2 - each should be connected to new center here
             nv_list = list(neigh_vertices)
+            nvs_to_add = []
             for nv in nv_list:
-                later_edges_to_add.append(({nv, center_vertice_name}, {'label': 'E', 'B': True}))
-                print(nv)
-            later_edges_to_add.append(({v, nv_list[0], center_vertice_name, nv_list[1]}, {'label': 'Q', 'R': False}))
+                if nv in [*vertices_added, something1, something2]:
+                    #prevent multiple edges on the bordering lines
+                    if nv not in linked_to_center:
+                        later_edges_to_add.append(({nv, center_vertice_name}, {'label': 'E', 'B': True}))
+                        linked_to_center.append(nv)
+                    nvs_to_add.append(nv)
+            if len(nvs_to_add) == 2:
+                later_edges_to_add.append(({v, nvs_to_add[0], center_vertice_name, nvs_to_add[1]}, {'label': 'Q', 'R': False}))
+            else:
+                print(nvs_to_add)
+
+        print(later_edges_to_add)
 
         graph.extend(nodes=[], edges=[*later_edges_to_add])
 
@@ -198,8 +224,8 @@ class P12(Production):
         # we will do that by checking if the node there is in correct position, and is linked to correct vertices
 
         somethings = []
-        print(incomplete_vertices)
-        print(unconnected_vertices)
+        # print(incomplete_vertices)
+        # print(unconnected_vertices)
 
         #if it's stupid but it works...
         for i in range(0,4):
@@ -212,7 +238,7 @@ class P12(Production):
                                 and v not in somethings):
                             somethings.append(v)
 
-        print(somethings)
+        # print(somethings)
 
 
         # edges_to_ignore = [{incomplete_vertices[0], something1}, {something1, missing_vertice}, {missing_vertice, something2}, {something2, incomplete_vertices[1]}]
