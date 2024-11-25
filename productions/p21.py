@@ -6,7 +6,13 @@ class P21(Production):
         super().__init__()
 
     def check(self, graph: HyperGraph, hyper_node: str) -> bool:
-        return not graph.is_breakable(hyper_node) and len(list(graph.get_neighbours(hyper_node))) == 6
+        hyper_edge = set(graph.get_neighbours(hyper_node))
+        labels = dict()
+        for edge, labels in graph.edges:
+            if edge == hyper_edge:
+                break
+
+        return labels.get('label') == 'S' and not graph.is_breakable(hyper_node) and len(hyper_edge) == 6
 
     def apply(self, graph: HyperGraph, hyper_node: str) -> HyperGraph:
         neighbours = set(graph.get_neighbours(hyper_node))

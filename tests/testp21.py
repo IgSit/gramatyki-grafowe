@@ -24,7 +24,7 @@ class TestsP21Check(unittest.TestCase):
             ({'v4', 'v5'}, {'label': 'E', 'B': True}),
             ({'v5', 'v6'}, {'label': 'E', 'B': True}),
             ({'v6', 'v1'}, {'label': 'E', 'B': True}),
-            ({'v1', 'v2', 'v3', 'v4', 'v5', 'v6'}, {'label': 'Q', 'R': False})
+            ({'v1', 'v2', 'v3', 'v4', 'v5', 'v6'}, {'label': 'S', 'R': False})
         ]
 
     def test_checkShouldReturnTrue(self):
@@ -35,7 +35,7 @@ class TestsP21Check(unittest.TestCase):
         hyper_graph = HyperGraph(
             nodes=[node for node in self.nodes if node[0] != 'v1'],
             edges=[edge for edge in self.edges if 'v1' not in edge[0]]
-                  + [({'v2', 'v3', 'v4', 'v5', 'v6'}, {'label': 'Q', 'R': False})]
+                  + [({'v2', 'v3', 'v4', 'v5', 'v6'}, {'label': 'S', 'R': False})]
 
         )
         self.assertFalse(self.prod.check(hyper_graph, hyper_graph.hyper_nodes[0]))
@@ -52,7 +52,7 @@ class TestsP21Check(unittest.TestCase):
         hyper_graph = HyperGraph(
             nodes=self.nodes,
             edges=[edge for edge in self.edges if len(edge[0]) < 3]
-                  + [({'v1','v2', 'v3', 'v4', 'v5', 'v6'}, {'label': 'Q', 'R': True})]
+                  + [({'v1','v2', 'v3', 'v4', 'v5', 'v6'}, {'label': 'S', 'R': True})]
         )
         self.assertFalse(self.prod.check(hyper_graph, hyper_graph.hyper_nodes[0]))
 
