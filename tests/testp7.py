@@ -1,11 +1,10 @@
+import unittest
 from graph.hypergraph import HyperGraph
 from productions.p7 import P7
 
-class TestP7():
-    def __init__(self):
-        pass
-    
-    def run(self):
+class TestP7(unittest.TestCase):
+    def test(self):
+        # given
         hyper_graph1 = HyperGraph(
             nodes=[
                 ("v1", {"pos": (0, 0), "h": False}),
@@ -18,9 +17,13 @@ class TestP7():
             ]
         )
 
+        # when
         production = P7()
         for hyper_node in hyper_graph1.hyper_nodes:
             if production.check(hyper_graph1, hyper_node):
-                hyper_graph1.visualize()
                 hyper_graph1 = production.apply(hyper_graph1, hyper_node)
-                hyper_graph1.visualize()
+
+        # then
+        for hyper_node in hyper_graph1.hyper_nodes:
+            self.assertTrue(hyper_graph1.is_breakable(hyper_node))
+        
