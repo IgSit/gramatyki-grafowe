@@ -72,7 +72,7 @@ class HyperGraph:
         return sum(p[0] for p in positions) / len(nodes), sum(p[1] for p in positions) / len(nodes)
 
     def visualize(self) -> None:
-        node_colors = ['#f88fff' if self.is_hyper_node(node) else '#8fdfff' for node in self.nx_graph.nodes]
+        node_colors = [('#84298a' if self.is_breakable(node) else '#f88fff') if self.is_hyper_node(node) else ('#1278a1' if self.is_hanging_node(node) else '#8fdfff') for node in self.nx_graph.nodes]
         edge_colors = ['#f88fff' if any(self.is_hyper_node(node) for node in edge) else ('#135210' if self.is_on_border(edge) else '#8fdfff')
                        for edge in self.nx_graph.edges]
         nx.draw(
