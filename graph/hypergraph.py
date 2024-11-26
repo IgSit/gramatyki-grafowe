@@ -81,7 +81,7 @@ class HyperGraph:
         return sum(p[0] for p in positions) / len(nodes), sum(p[1] for p in positions) / len(nodes)
 
     def visualize(self) -> None:
-        node_colors = ['#f88fff' if self.is_hyper_node(node) else '#8fdfff' for node in self.nx_graph.nodes]
+        node_colors = [('#84298a' if self.is_breakable(node) else '#f88fff') if self.is_hyper_node(node) else ('#1278a1' if self.is_hanging_node(node) else '#8fdfff') for node in self.nx_graph.nodes]
         edge_colors = ['#f88fff' if any(self.is_hyper_node(node) for node in edge) else ('#135210' if self.is_on_border(edge) else '#8fdfff')
                        for edge in self.nx_graph.edges]
         nx.draw(
@@ -153,9 +153,3 @@ class HyperGraph:
             if tuple(sorted(self.nx_graph.neighbors(hyper_node))) == tuple(sorted(hyper_edge)):
                 return hyper_node
         return None
-
-    def _calculate_hyper_node_position(self, hyper_edge) -> tuple[float, float]:
-        positions = [self.nx_graph.nodes[v]['pos'] for v in hyper_edge]
-        pos_x = (max(map(lambda x: x[0], positions)) - min(map(lambda x: x[0], positions))) / 2
-        pos_y = (max(map(lambda x: x[1], positions)) - min(map(lambda x: x[1], positions))) / 2
-        return pos_x, pos_y
