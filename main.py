@@ -1,7 +1,7 @@
-from graph.hypergraph import HyperGraph
-from productions.p1 import P1
-from tests.testp1 import TestP1
-import networkx as nx
+import unittest
 
 if __name__ == "__main__":
-    TestP1().run()
+    tests = unittest.TestLoader().discover("./tests/")
+    test_runner = unittest.runner.TextTestRunner()
+    test_runner.run(tests)
+
