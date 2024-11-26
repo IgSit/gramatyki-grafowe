@@ -29,8 +29,8 @@ class P22(Production):
             # if it is adjacent to our hyper_node
             common_nodes = [node for node in neighbours if node in neighbours2]
             cond1 = len(common_nodes) == 1
-            # if it is a square with one hanging node
-            hanging_nodes = self._get_hanging_nodes(graph, neighbours2) # only if there is one in subgraph
+            # Find hanging node in subgraph
+            hanging_nodes = self._get_hanging_nodes(graph, neighbours2)
             #print(hanging_node)
             cond2 = hanging_nodes and not graph.is_breakable(h_node)
             # and if this hanging node is in our hyper_node neighbourhood
