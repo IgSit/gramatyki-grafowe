@@ -1,8 +1,7 @@
 import unittest
-
+import networkx as nx
 from graph.hypergraph import HyperGraph
 from productions.p3 import P3
-import networkx as nx
 
 class TestP3(unittest.TestCase):
     def test(self):
@@ -41,7 +40,6 @@ class TestP3(unittest.TestCase):
                 ("v3", {"pos": (4, 4), "h": False}),
                 ("v4", {"pos": (0, 4), "h": False}),
                 ("v5", {"pos": (4, 2), "h": False}),
-                ("v6", {"pos": (2, 0), "h": False}),
                 ("v6", {"pos": (2, 0), "h": False}),
                 ("v7", {"pos": (2, 4), "h": False}),
                 ("v8", {"pos": (0, 2), "h": False}),
