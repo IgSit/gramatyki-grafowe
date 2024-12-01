@@ -47,6 +47,15 @@ class HyperGraph:
     def get_neighbours(self, node):
         return self.nx_graph.neighbors(node)
 
+    def set_node_attrs(self, node: str, attrs: dict) -> None:
+        if not HyperGraph.is_hyper_node(node):
+            n = list(filter(lambda n: n[0] == node, self.nodes))[0]
+            attrs["pos"] = n[1]["pos"]
+            self.nodes = list(filter(lambda n: n[0] != node, self.nodes))
+            self.nodes.append((node, attrs))
+
+        nx.set_node_attributes(self.nx_graph, {node: attrs})
+
     def extend(self,
                nodes: list[tuple[str, dict]],
                edges: list[tuple[set[str], dict]]):
