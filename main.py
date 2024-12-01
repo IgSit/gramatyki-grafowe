@@ -6,5 +6,4 @@ from tests.testp9 import TestP9
 import networkx as nx
 
 if __name__ == "__main__":
-    TestP1().run()
     TestP9().run()
