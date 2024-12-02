@@ -67,8 +67,9 @@ class P3(Production):
         neighbours2.sort()
         v5, v6 = neighbours2[0], neighbours2[1]
         v2 = list(nx.common_neighbors(graph.nx_graph, v5, v6))[0]
-        v1 = [n for n in graph.get_neighbours(v6) if n != v2][0]
-        v3 = [n for n in graph.get_neighbours(v5) if n != v2][0]
+
+        v1 = [n for n in nx.common_neighbors(graph.nx_graph, v6, hyper_node) if n != v2][0]
+        v3 = [n for n in nx.common_neighbors(graph.nx_graph, v5, hyper_node) if n != v2][0]
         v4 = [n for n in nx.common_neighbors(graph.nx_graph, v1, v3) if n != hyper_node][0]
 
         pos = graph.calculate_mean_node_position((v1, v4))
