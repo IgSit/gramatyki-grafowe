@@ -26,6 +26,10 @@ class P22(Production):
                 continue
             #print(f"H_node: {hyper_node}-{h_node}")
             neighbours2 = self._get_hyper_node_neighbours(graph, h_node)
+            
+            if len(neighbours2) != 6:
+                continue
+
             # if it is adjacent to our hyper_node
             common_nodes = [node for node in neighbours if node in neighbours2]
             cond1 = len(common_nodes) == 1
@@ -58,6 +62,10 @@ class P22(Production):
         # Checking every hyper_node in graph 
         for h_node in graph.hyper_nodes:
             neighbours2 = self._get_hyper_node_neighbours(graph, h_node)
+
+            if len(neighbours2) != 6:
+                continue
+
             # if it is adjacent to our hyper_node
             common_nodes = [node for node in neighbours if node in neighbours2]
             cond1 = len(common_nodes) == 1
@@ -72,6 +80,7 @@ class P22(Production):
                 # Lack of function graph.update()
                 graph.nx_graph.nodes[h_node]['R'] = True
                 node_to_change[1]['R'] = True
+                break # Only one hyper_node to propagate on
         if(edge_logs):
             print("After:")
             for edge in graph.edges:

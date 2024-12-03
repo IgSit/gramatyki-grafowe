@@ -11,8 +11,8 @@ class TestP22():
         # self.test3()
         # self.test4()
         # self.test5()
-        self.test6()
-        
+        # self.test6()
+        self.test7()
 
     def test1(self):
         hyper_graph = HyperGraph(
@@ -54,19 +54,23 @@ class TestP22():
                 ('v4', {'pos': (0, 4), 'h': False}),
                 ('v5', {'pos': (4, 2), 'h': True}),
                 ('v6', {'pos': (8, 2), 'h': False}),
-                ('v7', {'pos': (8, 4), 'h': False})
+                ('v7', {'pos': (8, 4), 'h': False}),
+                ('v8', {'pos': (-2, 2), 'h': False}),
+                ('v9', {'pos': (2,-2), 'h': False}),
             ],
             edges=[
-                ({'v1', 'v2'}, {'label': 'E', 'B': True}),
-                ({'v2', 'v5'}, {'label': 'E', 'B': False}),
+                ({'v1', 'v9'}, {'label': 'E', 'B': True}),
+                ({'v2', 'v9'}, {'label': 'E', 'B': True}),
+                ({'v2', 'v5'}, {'label': 'E', 'B': True}),
                 ({'v5', 'v3'}, {'label': 'E', 'B': False}),
                 ({'v3', 'v4'}, {'label': 'E', 'B': True}),
-                ({'v4', 'v1'}, {'label': 'E', 'B': True}),
+                ({'v4', 'v8'}, {'label': 'E', 'B': True}),
+                ({'v1', 'v8'}, {'label': 'E', 'B': True}),
                 ({'v3', 'v7'}, {'label': 'E', 'B': True}),
                 ({'v7', 'v6'}, {'label': 'E', 'B': True}),
                 ({'v6', 'v5'}, {'label': 'E', 'B': False}),
                 ({'v3', 'v5', 'v6', 'v7'}, {'label': 'Q1', 'R': True}),
-                ({'v1', 'v2', 'v3', 'v4'}, {'label': 'Q2', 'R': False})
+                ({'v1', 'v2', 'v3', 'v4', 'v8', 'v9'}, {'label': 'Q2', 'R': False})
             ]
         )
 
@@ -250,6 +254,59 @@ class TestP22():
         )
 
         productions = [P22(), P22()]
+        hyper_graph.visualize()
+        for production in productions:
+            for hyper_node in hyper_graph.hyper_nodes:
+                #print(f"Check {hyper_node}")
+                if production.check(hyper_graph, hyper_node):
+                    hyper_graph = production.apply(hyper_graph, hyper_node)
+                    hyper_graph.visualize()
+                    break
+
+
+    def test7(self):
+        hyper_graph = HyperGraph(
+            nodes=[
+                ('v1', {'pos': (0, 0), 'h': False}),
+                ('v2', {'pos': (4, 0), 'h': False}),
+                ('v3', {'pos': (-2, 2), 'h': False}),
+                ('v4', {'pos': (0, 4), 'h': False}),
+                ('v5', {'pos': (6, 2), 'h': False}),
+                ('v6', {'pos': (4, 4), 'h': False}),
+                ('v7', {'pos': (5, 3), 'h': True}),
+                ('v8', {'pos': (7, 3.5), 'h': False}),
+                ('v9', {'pos': (8, 2.5), 'h': False}),
+                ('v10', {'pos': (6, 4.5), 'h': False}),
+                ('v11', {'pos': (6, -2), 'h': False}),
+                ('v12', {'pos': (9, -1), 'h': False}),
+                ('v13', {'pos': (11, 1), 'h': False}),
+                ('v14', {'pos': (10, 3), 'h': False}),
+            ],
+            edges=[
+                ({'v1', 'v2'}, {'label': 'E', 'B': True}),
+                ({'v2', 'v5'}, {'label': 'E', 'B': True}),
+                ({'v5', 'v7'}, {'label': 'E', 'B': False}),
+                ({'v7', 'v6'}, {'label': 'E', 'B': True}),
+                ({'v6', 'v4'}, {'label': 'E', 'B': True}),
+                ({'v4', 'v3'}, {'label': 'E', 'B': True}),
+                ({'v3', 'v1'}, {'label': 'E', 'B': True}),
+                ({'v5', 'v9'}, {'label': 'E', 'B': True}),
+                ({'v9', 'v8'}, {'label': 'E', 'B': True}),
+                ({'v8', 'v7'}, {'label': 'E', 'B': False}),
+                ({'v10', 'v6'}, {'label': 'E', 'B': True}),
+                ({'v10', 'v8'}, {'label': 'E', 'B': True}),
+                ({'v9', 'v14'}, {'label': 'E', 'B': True}),
+                ({'v14', 'v13'}, {'label': 'E', 'B': True}),
+                ({'v13', 'v12'}, {'label': 'E', 'B': True}),
+                ({'v12', 'v11'}, {'label': 'E', 'B': True}),
+                ({'v11', 'v2'}, {'label': 'E', 'B': True}),
+                ({'v1', 'v2', 'v5', 'v6', 'v4', 'v3'}, {'label': 'Q1', 'R': False}),
+                ({'v5', 'v7', 'v8', 'v9'}, {'label': 'Q2', 'R': True}),
+                ({'v2', 'v5', 'v14', 'v13', 'v12', 'v11'}, {'label': 'Q3', 'R': False})
+            ]
+        )
+
+        productions = [P22()]
         hyper_graph.visualize()
         for production in productions:
             for hyper_node in hyper_graph.hyper_nodes:
