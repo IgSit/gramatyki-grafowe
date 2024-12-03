@@ -1,5 +1,6 @@
 from graph.hypergraph import HyperGraph
 from productions.p11 import P11
+from productions.p12 import P12
 
 
 class TestP11():
@@ -82,7 +83,7 @@ class TestP11():
             ]
         )
 
-        productions = [P11()]
+        # productions = [P11()]
 
         hyper_graph2.visualize()
 
@@ -131,7 +132,7 @@ class TestP11():
             ]
         )
 
-        productions = [P11()]
+        # productions = [P11()]
 
         hyper_graph3.visualize()
 

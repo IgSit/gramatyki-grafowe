@@ -87,6 +87,7 @@ class P12(Production):
             attrs = graph.nodes[idx][1]
             attrs['h'] = False
             graph.nodes[idx] = (vertice, attrs)
+            graph.nx_graph.nodes.get(vertice)['h'] = False
 
         # print(graph.nodes)
 
@@ -107,7 +108,7 @@ class P12(Production):
             new_vertice_pos = graph.calculate_mean_node_position([v1, v2])
             new_vertice_name = 'v' + str(new_vertice_pos)
             old_edge, old_edge_attr = self.__get_edge(graph, v1, v2)
-            vertices_to_add.append((new_vertice_name, {"h": False, "pos": new_vertice_pos}))
+            vertices_to_add.append((new_vertice_name, {"h": not old_edge_attr.get("B"), "pos": new_vertice_pos}))
             edges_to_add.append(({v1, new_vertice_name}, {'label': 'E', 'B': old_edge_attr["B"]}))
             edges_to_add.append(({new_vertice_name, v2}, {'label': 'E', 'B': old_edge_attr["B"]}))
 

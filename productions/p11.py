@@ -16,6 +16,7 @@ class P11(Production):
         hypernode_neigh_vertices = tuple(graph.get_neighbours(hyper_node))
         cond2 = len(hypernode_neigh_vertices) == 6
 
+        #TODO: check AMOUNT of missing vertices
         incomplete_vertices, missing_vertice = self.__get_incomplete_vertices(graph, hyper_node)
 
         #before we move on - check counts - we should have one missing, two incomplete due to hanging node being "neighbours"
@@ -85,6 +86,7 @@ class P11(Production):
             attrs = graph.nodes[idx][1]
             attrs['h'] = False
             graph.nodes[idx] = (vertice, attrs)
+            graph.nx_graph.nodes.get(vertice)['h'] = False
 
         print(graph.nodes)
 
@@ -104,7 +106,7 @@ class P11(Production):
             new_vertice_pos = graph.calculate_mean_node_position([v1, v2])
             new_vertice_name = 'v' + str(new_vertice_pos)
             old_edge, old_edge_attr = self.__get_edge(graph, v1, v2)
-            vertices_to_add.append((new_vertice_name, {"h": False, "pos": new_vertice_pos}))
+            vertices_to_add.append((new_vertice_name, {"h": not old_edge_attr.get("B"), "pos": new_vertice_pos}))
             edges_to_add.append(({v1, new_vertice_name}, {'label': 'E', 'B': old_edge_attr["B"]}))
             edges_to_add.append(({new_vertice_name, v2}, {'label': 'E', 'B': old_edge_attr["B"]}))
 

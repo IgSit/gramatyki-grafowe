@@ -82,7 +82,7 @@ class TestP12():
             ]
         )
 
-        productions = [P12()]
+        # productions = [P12()]
 
         hyper_graph2.visualize()
 
@@ -130,7 +130,7 @@ class TestP12():
             ]
         )
 
-        productions = [P12()]
+        # productions = [P12()]
 
         hyper_graph3.visualize()
 
