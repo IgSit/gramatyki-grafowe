@@ -17,12 +17,14 @@ class P11(Production):
         cond2 = len(hypernode_neigh_vertices) == 6
 
         #TODO: check AMOUNT of missing vertices
-        incomplete_vertices, missing_vertice = self.__get_incomplete_vertices(graph, hyper_node)
+        incomplete_vertices, missing_vertices = self.__get_incomplete_vertices(graph, hyper_node)
 
         #before we move on - check counts - we should have one missing, two incomplete due to hanging node being "neighbours"
-        ignored_vertices = [*incomplete_vertices, missing_vertice]
-        if len(incomplete_vertices) != 2 or missing_vertice is None:
+
+        if len(incomplete_vertices) != 2 or len(missing_vertices) != 1:
             return False
+        missing_vertice = missing_vertices[0]
+        ignored_vertices = [*incomplete_vertices, missing_vertice]
 
         for v in hypernode_neigh_vertices:
             if v not in ignored_vertices:
@@ -65,7 +67,8 @@ class P11(Production):
 
     def apply(self, graph: HyperGraph, hyper_node: str) -> HyperGraph:
         hypernode_neigh_vertices = tuple(graph.get_neighbours(hyper_node))
-        incomplete_vertices, missing_vertice = self.__get_incomplete_vertices(graph, hyper_node)
+        incomplete_vertices, missing_vertices = self.__get_incomplete_vertices(graph, hyper_node)
+        missing_vertice = missing_vertices[0]
         unconnected_vertices = self.get_unconnected_vertices(graph, hypernode_neigh_vertices, incomplete_vertices, missing_vertice)
         something1, something2, edges_to_ignore = self.__get_missing_vertices(graph, incomplete_vertices, missing_vertice, unconnected_vertices)
 
@@ -183,16 +186,16 @@ class P11(Production):
                 occurrences[edge[1]] = 1
 
         incomplete_vertices = []
-        missing_vertice = None
+        missing_vertices = []
 
         # check which nodes are not connected between them (fully or partially)
         for vertice in hypernode_neigh_vertices:
             if occurrences.get(vertice) == 1:
                 incomplete_vertices.append(vertice)
             if occurrences.get(vertice) == None:
-                missing_vertice = vertice
+                missing_vertices.append(vertice)
 
-        return incomplete_vertices, missing_vertice
+        return incomplete_vertices, missing_vertices
 
     def get_unconnected_vertices(self, graph, hypernode_neigh_vertices, incomplete_vertices, missing_vertice):
         # check whether two vertices marked as 'something1', 'something2' above exist
