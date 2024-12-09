@@ -4,6 +4,8 @@ from unittest import TestCase
 from graph.hypergraph import HyperGraph
 from productions.p1 import P1
 
+from tests.test_utils import prepare_edges
+
 
 class TestP1(TestCase):
 
@@ -56,13 +58,33 @@ class TestP1(TestCase):
                 ({'a(2.0, 0.0)', 'a(2.0, 2.0)'}, {'label': 'E', 'B': False}),
                 ({'a(4.0, 2.0)', 'a(2.0, 2.0)'}, {'label': 'E', 'B': False}),
                 ({'a(2.0, 4.0)', 'a(2.0, 2.0)'}, {'label': 'E', 'B': False}),
-                ({'a(0.0, 2.0)', 'v11', 'a(2.0, 0.0)', 'a(2.0, 2.0)'}, {'label': 'Q', 'R': False}),
                 ({'a(2.0, 0.0)', 'v12', 'a(4.0, 2.0)', 'a(2.0, 2.0)'}, {'label': 'Q', 'R': False}),
-                ({'a(0.0, 2.0)', 'a(2.0, 2.0)', 'a(2.0, 4.0)', 'v14'}, {'label': 'Q', 'R': False}),
                 ({'a(2.0, 2.0)', 'a(4.0, 2.0)', 'v13', 'a(2.0, 4.0)'}, {'label': 'Q', 'R': False}),
+                ({'a(0.0, 2.0)', 'v11', 'a(2.0, 0.0)', 'a(2.0, 2.0)'}, {'label': 'Q', 'R': False}),
+                ({'a(0.0, 2.0)', 'a(2.0, 2.0)', 'a(2.0, 4.0)', 'v14'}, {'label': 'Q', 'R': False}),
             ]
         )
 
         self.assertTrue(
             nx.is_isomorphic(hyper_graph.nx_graph, expected_graph.nx_graph)
+        )
+
+        self.assertDictEqual(
+            nx.get_node_attributes(hyper_graph.nx_graph, 'h'),
+            nx.get_node_attributes(expected_graph.nx_graph, 'h')
+        )
+
+        self.assertDictEqual(
+            prepare_edges(nx.get_edge_attributes(hyper_graph.nx_graph, 'label')),
+            prepare_edges(nx.get_edge_attributes(expected_graph.nx_graph, 'label'))
+        )
+
+        self.assertDictEqual(
+            prepare_edges(nx.get_edge_attributes(hyper_graph.nx_graph, 'B')),
+            prepare_edges(nx.get_edge_attributes(expected_graph.nx_graph, 'B'))
+        )
+
+        self.assertDictEqual(
+            prepare_edges(nx.get_edge_attributes(hyper_graph.nx_graph, 'R')),
+            prepare_edges(nx.get_edge_attributes(expected_graph.nx_graph, 'R'))
         )
