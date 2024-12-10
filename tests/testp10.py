@@ -31,7 +31,6 @@ class TestP10Check(unittest.TestCase):
 
     def test_checkShouldReturnTrue(self):
         graph = HyperGraph(self.nodes, self.edges)
-        graph.visualize()
         self.assertTrue(self.prod.check(graph, graph.hyper_nodes[0]))
 
     def test_checkShouldReturnFalseWhenHangingNodeIsMissing(self):
@@ -82,7 +81,6 @@ class TestP10Check(unittest.TestCase):
             ({'v1', 'v2', 'v3', 'v4', 'v5', 'v6'}, {'label': 'S', 'R': True})
         ]
         )
-        graph.visualize()
         self.assertFalse(self.prod.check(graph, graph.hyper_nodes[0]))
 
 class TestP10Apply(unittest.TestCase):
@@ -251,10 +249,8 @@ class TestP10(unittest.TestCase):
         nodes, edges = deepcopy(hyper_graph.nodes), deepcopy(hyper_graph.edges)
         applicable_nodes = [v for v in hyper_graph.hyper_nodes if self.prod.check(hyper_graph, v)]
         self.assertEqual(len(applicable_nodes), 1)
-        hyper_graph.visualize()
         self.assertEqual(len([n for n in hyper_graph.nodes if n[1]['h']]), 1)
         self.prod.apply(hyper_graph, applicable_nodes[0])
-        hyper_graph.visualize()
         for node in nodes:
             if node[1]['h']:
                 new_node = deepcopy(node)
@@ -283,7 +279,6 @@ class TestP10(unittest.TestCase):
         self.assertEqual(len([e for e in hyper_graph.edges if e[1]["label"] == "E" and e[1]["B"]]), 20)
         self.assertEqual(len([e for e in hyper_graph.edges if e[1]["label"] == "Q"]), 14)
         self.assertEqual(len([e for e in hyper_graph.edges if e[1]["label"] == "S"]), 4)
-        hyper_graph.visualize()
 
 
 
