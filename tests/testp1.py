@@ -1,29 +1,16 @@
+import networkx as nx
+from unittest import TestCase
+
 from graph.hypergraph import HyperGraph
 from productions.p1 import P1
 
-class TestP1():
-    def __init__(self):
-        pass
-    
-    def run(self):
-        hyper_graph1 = HyperGraph(
-            nodes=[
-                ('v1', {'pos': (0, 0), 'h': False}),
-                ('v2', {'pos': (4, 0), 'h': False}),
-                ('v3', {'pos': (4, 4), 'h': False}),
-                ('v4', {'pos': (0, 4), 'h': False}),
-                ('v5', {'pos': (4, 2), 'h': True})
-            ],
-            edges=[
-                ({'v1', 'v2'}, {'label': 'E', 'B': True}),
-                ({'v2', 'v5'}, {'label': 'E', 'B': True}),
-                ({'v5', 'v3'}, {'label': 'E', 'B': True}),
-                ({'v3', 'v4'}, {'label': 'E', 'B': True}),
-                ({'v4', 'v1'}, {'label': 'E', 'B': True}),
-                ({'v1', 'v2', 'v3', 'v4'}, {'label': 'Q', 'R': True})
-            ]
-        )
-        hyper_graph2 = HyperGraph(
+from tests.test_utils import prepare_edges
+
+
+class TestP1(TestCase):
+
+    def test(self):
+        hyper_graph = HyperGraph(
             nodes=[
                 ('v11', {'pos': (0, 0), 'h': False}),
                 ('v12', {'pos': (4, 0), 'h': False}),
@@ -42,10 +29,62 @@ class TestP1():
         productions = [P1()]
 
         for production in productions:
-            for hyper_node in hyper_graph2.hyper_nodes:
-                if production.check(hyper_graph2, hyper_node):
-                    hyper_graph2.visualize()
-                    hyper_graph2 = production.apply(hyper_graph2, hyper_node)
-                    hyper_graph2.visualize()
-                    break
-        
+            for hyper_node in hyper_graph.hyper_nodes:
+                if production.check(hyper_graph, hyper_node):
+                    hyper_graph = production.apply(hyper_graph, hyper_node)
+
+        expected_graph = HyperGraph(
+            nodes=[
+                ('v11', {'pos': (0, 0), 'h': False}),
+                ('v12', {'pos': (4, 0), 'h': False}),
+                ('v13', {'pos': (4, 4), 'h': False}),
+                ('v14', {'pos': (0, 4), 'h': False}),
+                ('a(2.0, 2.0)', {'pos': (0, 2), 'h': False}),
+                ('a(0.0, 2.0)', {'pos': (0, 2), 'h': True}),
+                ('a(4.0, 2.0)', {'pos': (4, 2), 'h': True}),
+                ('a(2.0, 4.0)', {'pos': (2, 4), 'h': True}),
+                ('a(2.0, 0.0)', {'pos': (2, 0), 'h': True}),
+            ],
+            edges=[
+                ({'v11', 'a(2.0, 0.0)'}, {'label': 'E', 'B': True}),
+                ({'a(2.0, 0.0)', 'v12'}, {'label': 'E', 'B': True}),
+                ({'v12', 'a(4.0, 2.0)'}, {'label': 'E', 'B': True}),
+                ({'a(4.0, 2.0)', 'v13'}, {'label': 'E', 'B': True}),
+                ({'v13', 'a(2.0, 4.0)'}, {'label': 'E', 'B': True}),
+                ({'a(2.0, 4.0)', 'v14'}, {'label': 'E', 'B': True}),
+                ({'v14', 'a(0.0, 2.0)'}, {'label': 'E', 'B': True}),
+                ({'a(0.0, 2.0)', 'v11'}, {'label': 'E', 'B': True}),
+                ({'a(0.0, 2.0)', 'a(2.0, 2.0)'}, {'label': 'E', 'B': False}),
+                ({'a(2.0, 0.0)', 'a(2.0, 2.0)'}, {'label': 'E', 'B': False}),
+                ({'a(4.0, 2.0)', 'a(2.0, 2.0)'}, {'label': 'E', 'B': False}),
+                ({'a(2.0, 4.0)', 'a(2.0, 2.0)'}, {'label': 'E', 'B': False}),
+                ({'a(2.0, 0.0)', 'v12', 'a(4.0, 2.0)', 'a(2.0, 2.0)'}, {'label': 'Q', 'R': False}),
+                ({'a(2.0, 2.0)', 'a(4.0, 2.0)', 'v13', 'a(2.0, 4.0)'}, {'label': 'Q', 'R': False}),
+                ({'a(0.0, 2.0)', 'v11', 'a(2.0, 0.0)', 'a(2.0, 2.0)'}, {'label': 'Q', 'R': False}),
+                ({'a(0.0, 2.0)', 'a(2.0, 2.0)', 'a(2.0, 4.0)', 'v14'}, {'label': 'Q', 'R': False}),
+            ]
+        )
+
+        self.assertTrue(
+            nx.is_isomorphic(hyper_graph.nx_graph, expected_graph.nx_graph)
+        )
+
+        self.assertDictEqual(
+            nx.get_node_attributes(hyper_graph.nx_graph, 'h'),
+            nx.get_node_attributes(expected_graph.nx_graph, 'h')
+        )
+
+        self.assertDictEqual(
+            prepare_edges(nx.get_edge_attributes(hyper_graph.nx_graph, 'label')),
+            prepare_edges(nx.get_edge_attributes(expected_graph.nx_graph, 'label'))
+        )
+
+        self.assertDictEqual(
+            prepare_edges(nx.get_edge_attributes(hyper_graph.nx_graph, 'B')),
+            prepare_edges(nx.get_edge_attributes(expected_graph.nx_graph, 'B'))
+        )
+
+        self.assertDictEqual(
+            prepare_edges(nx.get_edge_attributes(hyper_graph.nx_graph, 'R')),
+            prepare_edges(nx.get_edge_attributes(expected_graph.nx_graph, 'R'))
+        )
