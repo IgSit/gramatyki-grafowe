@@ -15,8 +15,5 @@ class P21(Production):
         return labels.get('label') == 'S' and not graph.is_breakable(hyper_node) and len(hyper_edge) == 6
 
     def apply(self, graph: HyperGraph, hyper_node: str) -> HyperGraph:
-        neighbours = set(graph.get_neighbours(hyper_node))
-        graph.shrink(nodes=[], edges=[neighbours])
-        graph.extend(nodes=[], edges=[(neighbours, {"label": "S", "R": True})])
-
+        graph.change_label(hyper_node, {'R': True})
         return graph

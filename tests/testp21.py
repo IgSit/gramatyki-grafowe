@@ -194,7 +194,5 @@ class TestsP21Apply(unittest.TestCase):
         self.assertTrue(({'v1', 'v2', 'v3', 'v4', 'v5', 'v6'}, {'label': 'S', 'R': True}) in hyper_graph.edges)
         self.assertTrue(len(hyper_graph.hyper_nodes) == len(hyper_nodes) + 1)
 
-
-
 if __name__ == '__main__':
     unittest.main()
