@@ -237,6 +237,7 @@ class TestP11():
                 ({'v2', 'v5', 'v1011', 'v11'}, {'label': 'Q', 'R': False}),
                 ({'v1', 'v12', 'v1112', 'v7'}, {'label': 'Q', 'R': False}),
                 ({'v2', 'v11', 'v1112', 'v7'}, {'label': 'Q', 'R': False}),
+                ({'v6', 'v4', 'v9', 'v912'}, {'label': 'Q', 'R': False}),
             ]
         )
 

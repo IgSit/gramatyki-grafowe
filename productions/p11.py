@@ -151,7 +151,7 @@ class P11(Production):
                 if nv in [*vertices_added, something1, something2]:
                     # prevent multiple edges on the bordering lines
                     if nv not in linked_to_center:
-                        later_edges_to_add.append(({nv, center_vertice_name}, {'label': 'E', 'B': True}))
+                        later_edges_to_add.append(({nv, center_vertice_name}, {'label': 'E', 'B': False}))
                         linked_to_center.append(nv)
                     nvs_to_add.append(nv)
             if len(nvs_to_add) == 2:
