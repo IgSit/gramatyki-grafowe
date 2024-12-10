@@ -13,6 +13,12 @@ class P10(Production):
             return False
 
         hyper_edge = set(graph.get_neighbours(hyper_node))
+        for edge, labels in graph.edges:
+            if edge == hyper_edge:
+                if labels["label"] != "S":
+                    return False
+                break
+
         node2labels = {node:labels for node, labels in graph.nodes}
         for node in hyper_edge:
             labels = node2labels[node]
@@ -70,6 +76,7 @@ class P10(Production):
             for node in get_neighbours(chain[-1]):
                 if node == chain[0]:
                     return additional_node, chain
+        return None, None
 
     def apply(self, graph: HyperGraph, hyper_node: str) -> HyperGraph:
         hyper_edge = set(graph.get_neighbours(hyper_node))
@@ -109,13 +116,12 @@ class P10(Production):
             node2 = extended_chain[(2 + 2*i) % len(extended_chain)]
             node3 = extended_chain[(3 + 2*i) % len(extended_chain)]
 
-            edges_to_add.append(({node1, center_node[0]}, {"label": "E", "B": True}))
-            edges_to_add.append(({node3, center_node[0]}, {"label": "E", "B": True}))
+            edges_to_add.append(({node1, center_node[0]}, {"label": "E", "B": False}))
             edges_to_add.append(({node1, node2, node3, center_node[0]}, {"label": "Q", "R": False}))
 
         graph.shrink(nodes=[], edges=edges_to_remove)
         graph.extend(nodes_to_add, edges_to_add)
-        # TODO: Change hanging node label
+        graph.change_label(additional_node, {"h": False})
 
         return graph
 
