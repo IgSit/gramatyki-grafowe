@@ -73,7 +73,7 @@ class P11(Production):
         something1, something2, edges_to_ignore = self.__get_missing_vertices(graph, incomplete_vertices, missing_vertice, unconnected_vertices)
 
         #something is a WIP name - will stay until someone finds a better one
-        print(something1, something2, edges_to_ignore)
+        # print(something1, something2, edges_to_ignore)
 
 
         #set h to false when needed
@@ -84,20 +84,20 @@ class P11(Production):
                 idx_to_set_h.append(idx)
 
         for idx in idx_to_set_h:
-            print(graph.nodes[idx])
+            # print(graph.nodes[idx])
             vertice = graph.nodes[idx][0]
             attrs = graph.nodes[idx][1]
             attrs['h'] = False
             graph.nodes[idx] = (vertice, attrs)
             graph.nx_graph.nodes.get(vertice)['h'] = False
 
-        print(graph.nodes)
+        # print(graph.nodes)
 
         #add new vertices between "non-special" vertices
         subgraph_edges = set(nx.subgraph(graph.nx_graph, hypernode_neigh_vertices).edges)
         set_subgraph_edges = (set(edge) for edge in subgraph_edges)
 
-        print(graph.edges)
+        # print(graph.edges)
 
         #remove hyperedges, "regular" edges
         vertices_to_add = []
@@ -105,7 +105,7 @@ class P11(Production):
 
         #create nodes between those removed
         for v1, v2 in subgraph_edges:
-            print(v1, v2)
+            # print(v1, v2)
             new_vertice_pos = graph.calculate_mean_node_position([v1, v2])
             new_vertice_name = 'v' + str(new_vertice_pos)
             old_edge, old_edge_attr = self.__get_edge(graph, v1, v2)
@@ -117,8 +117,8 @@ class P11(Production):
         center_vertice_name = 'v' + str(center_vertice_pos)
         vertices_to_add.append((center_vertice_name, {"pos": center_vertice_pos, "h": 0}))
 
-        print(vertices_to_add)
-        print(edges_to_add)
+        # print(vertices_to_add)
+        # print(edges_to_add)
 
         graph.shrink(nodes=[], edges=[set(hypernode_neigh_vertices), *set_subgraph_edges])
         graph.extend(nodes=[*vertices_to_add], edges=[])
@@ -158,7 +158,8 @@ class P11(Production):
                 later_edges_to_add.append(
                     ({v, nvs_to_add[0], center_vertice_name, nvs_to_add[1]}, {'label': 'Q', 'R': False}))
             else:
-                print(nvs_to_add)
+                # print(nvs_to_add)
+                pass
 
         graph.extend(nodes=[], edges=[*later_edges_to_add])
 

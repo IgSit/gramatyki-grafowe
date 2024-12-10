@@ -64,14 +64,14 @@ class P12(Production):
 
     def apply(self, graph: HyperGraph, hyper_node: str) -> HyperGraph:
         hypernode_neigh_vertices = tuple(graph.get_neighbours(hyper_node))
-        print(hypernode_neigh_vertices)
+        # print(hypernode_neigh_vertices)
         incomplete_vertices, _ = self.__get_incomplete_vertices(graph, hyper_node)
-        print(incomplete_vertices)
+        # print(incomplete_vertices)
         unconnected_vertices = self.get_unconnected_vertices(graph, hypernode_neigh_vertices, incomplete_vertices)
         something1, something2 = self.__get_missing_vertices(graph, incomplete_vertices, unconnected_vertices)
 
         #something is a WIP name - will stay until someone finds a better one
-        print(something1, something2)
+        # print(something1, something2)
 
 
         #set h to false when needed
@@ -159,9 +159,10 @@ class P12(Production):
             if len(nvs_to_add) == 2:
                 later_edges_to_add.append(({v, nvs_to_add[0], center_vertice_name, nvs_to_add[1]}, {'label': 'Q', 'R': False}))
             else:
-                print(nvs_to_add)
+                # print(nvs_to_add)
+                pass
 
-        print(later_edges_to_add)
+        # print(later_edges_to_add)
 
         graph.extend(nodes=[], edges=[*later_edges_to_add])
 
