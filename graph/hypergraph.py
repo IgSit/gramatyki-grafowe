@@ -76,6 +76,22 @@ class HyperGraph:
         self._remove_edges(edges)
         self.nx_graph.remove_nodes_from(nodes)
 
+    def change_label(self, node: str, labels_to_change: dict):
+        if self.is_hyper_node(node):
+            hyper_edge = set(self.get_neighbours(node))
+            for edge, edge_labels in self.edges:
+                if edge == hyper_edge:
+                    edge_labels.update(labels_to_change)
+                    break
+            for v in hyper_edge:
+                self.nx_graph.edges[node, v].update(labels_to_change)
+        else:
+            for n, node_labels in self.nodes:
+                if n == node:
+                    node_labels.update(labels_to_change)
+                    break
+        self.nx_graph.nodes[node].update(labels_to_change)
+
     def calculate_mean_node_position(self, nodes) -> tuple[float, float]:
         positions = [self.nx_graph.nodes[n]['pos'] for n in nodes]
         return sum(p[0] for p in positions) / len(nodes), sum(p[1] for p in positions) / len(nodes)
