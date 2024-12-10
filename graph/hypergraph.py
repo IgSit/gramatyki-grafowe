@@ -56,15 +56,6 @@ class HyperGraph:
 
         nx.set_node_attributes(self.nx_graph, {node: attrs})
 
-    def set_node_attrs(self, node: str, attrs: dict) -> None:
-        if not HyperGraph.is_hyper_node(node):
-            n = list(filter(lambda n: n[0] == node, self.nodes))[0]
-            attrs["pos"] = n[1]["pos"]
-            self.nodes = list(filter(lambda n: n[0] != node, self.nodes))
-            self.nodes.append((node, attrs))
-
-        nx.set_node_attributes(self.nx_graph, {node: attrs})
-
     def extend(self,
                nodes: list[tuple[str, dict]],
                edges: list[tuple[set[str], dict]]):
@@ -101,6 +92,22 @@ class HyperGraph:
             with_labels=True
         )
         plt.show()
+        
+    def save_figure_to_buffer(self, buffer) -> None:
+        node_colors = [('#84298a' if self.is_breakable(node) else '#f88fff') if self.is_hyper_node(node) else ('#1278a1' if self.is_hanging_node(node) else '#8fdfff') for node in self.nx_graph.nodes]
+        edge_colors = ['#f88fff' if any(self.is_hyper_node(node) for node in edge) else ('#135210' if self.is_on_border(edge) else '#8fdfff')
+                       for edge in self.nx_graph.edges]
+        nx.draw(
+            self.nx_graph,
+            nx.get_node_attributes(self.nx_graph, 'pos'),
+            node_color=node_colors,
+            edge_color=edge_colors,
+            with_labels=True
+        )
+        
+        plt.savefig(buffer, format='png')
+        plt.close()
+        buffer.seek(0)
 
     @classmethod
     def _check_data(cls, nodes, edges) -> bool:

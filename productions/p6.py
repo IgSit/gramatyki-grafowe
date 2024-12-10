@@ -75,6 +75,8 @@ class P6(Production):
                     continue
                 hanging_nodes.append(v)
 
+        hanging_nodes.sort()
+        neighbours.sort()
 
         v1 = neighbours[0]
         

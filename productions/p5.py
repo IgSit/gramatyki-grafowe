@@ -72,6 +72,8 @@ class P5(Production):
                 if (graph.calculate_mean_node_position((n1, n2)) != graph.nx_graph.nodes[v]["pos"]):
                     continue
                 hanging_nodes.append(v)
+                
+        hanging_nodes.sort()
 
         for n1, n2 in itertools.combinations(neighbours, 2):
             if not graph.nx_graph.has_edge(n1, n2):
@@ -83,7 +85,7 @@ class P5(Production):
                 if node not in hanging_nodes and not graph.is_hyper_node(node)
             ]
             if not valid_neighbors:
-                v3, v4 = n1, n2
+                v3, v4 = sorted([n1, n2])
                 break
 
         used_nodes = {v3, v4}
@@ -122,7 +124,7 @@ class P5(Production):
         # New nodes
 
         v43_pos = graph.calculate_mean_node_position((v4, v3))
-        v43 = (f"v{v43_pos}", {"pos": v43_pos, "h" : e_v4_v3_b})
+        v43 = (f"v{v43_pos}", {"pos": v43_pos, "h" : not e_v4_v3_b})
 
         v1234_pos = graph.calculate_mean_node_position((v1, v2, v3, v4))
         v1234 = (f"v{v1234_pos}", {"pos": v1234_pos})
