@@ -5,7 +5,7 @@ from productions.production import Production
 
 
 # Config
-edge_logs = True
+edge_logs = False
 condition_logs = False
 
 class P22(Production):
