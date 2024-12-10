@@ -7,7 +7,7 @@ from productions.p1 import P1
 from tests.test_utils import prepare_edges
 
 
-class TestP1(TestCase):
+class TestP1big(TestCase):
 
     def test(self):
         hyper_graph = HyperGraph(
@@ -33,6 +33,15 @@ class TestP1(TestCase):
                 if production.check(hyper_graph, hyper_node):
                     hyper_graph = production.apply(hyper_graph, hyper_node)
 
+        for neighbour in hyper_graph.get_neighbours('v13'):
+            if neighbour.startswith('X'):
+                hyper_graph.set_node_attrs(neighbour, {"R": True})
+
+        for production in productions:
+            for hyper_node in hyper_graph.hyper_nodes:
+                if production.check(hyper_graph, hyper_node):
+                    hyper_graph = production.apply(hyper_graph, hyper_node)
+
         expected_graph = HyperGraph(
             nodes=[
                 ('v11', {'pos': (0, 0), 'h': False}),
@@ -44,24 +53,40 @@ class TestP1(TestCase):
                 ('a(4.0, 2.0)', {'pos': (4, 2), 'h': False}),
                 ('a(2.0, 4.0)', {'pos': (2, 4), 'h': False}),
                 ('a(2.0, 0.0)', {'pos': (2, 0), 'h': False}),
+                ('a(3.0, 2.0)', {'pos': (3, 2), 'h': True}),
+                ('a(2.0, 3.0)', {'pos': (2, 3), 'h': True}),
+                ('a(3.0, 3.0)', {'pos': (3, 3), 'h': False}),
+                ('a(3.0, 4.0)', {'pos': (3, 4), 'h': False}),
+                ('a(4.0, 3.0)', {'pos': (4, 3), 'h': False}),
             ],
             edges=[
                 ({'v11', 'a(2.0, 0.0)'}, {'label': 'E', 'B': True}),
                 ({'a(2.0, 0.0)', 'v12'}, {'label': 'E', 'B': True}),
                 ({'v12', 'a(4.0, 2.0)'}, {'label': 'E', 'B': True}),
-                ({'a(4.0, 2.0)', 'v13'}, {'label': 'E', 'B': True}),
-                ({'v13', 'a(2.0, 4.0)'}, {'label': 'E', 'B': True}),
+                ({'a(4.0, 2.0)', 'a(4.0, 3.0)'}, {'label': 'E', 'B': True}),
+                ({'a(4.0, 3.0)', 'v13'}, {'label': 'E', 'B': True}),
+                ({'v13', 'a(3.0, 4.0)'}, {'label': 'E', 'B': True}),
+                ({'a(3.0, 4.0)', 'a(2.0, 4.0)'}, {'label': 'E', 'B': True}),
                 ({'a(2.0, 4.0)', 'v14'}, {'label': 'E', 'B': True}),
                 ({'v14', 'a(0.0, 2.0)'}, {'label': 'E', 'B': True}),
                 ({'a(0.0, 2.0)', 'v11'}, {'label': 'E', 'B': True}),
                 ({'a(0.0, 2.0)', 'a(2.0, 2.0)'}, {'label': 'E', 'B': False}),
                 ({'a(2.0, 0.0)', 'a(2.0, 2.0)'}, {'label': 'E', 'B': False}),
-                ({'a(4.0, 2.0)', 'a(2.0, 2.0)'}, {'label': 'E', 'B': False}),
-                ({'a(2.0, 4.0)', 'a(2.0, 2.0)'}, {'label': 'E', 'B': False}),
+                ({'a(4.0, 2.0)', 'a(3.0, 2.0)'}, {'label': 'E', 'B': False}),
+                ({'a(2.0, 2.0)', 'a(3.0, 2.0)'}, {'label': 'E', 'B': False}),
+                ({'a(2.0, 4.0)', 'a(2.0, 3.0)'}, {'label': 'E', 'B': False}),
+                ({'a(2.0, 2.0)', 'a(2.0, 3.0)'}, {'label': 'E', 'B': False}),
+                ({'a(3.0, 3.0)', 'a(2.0, 3.0)'}, {'label': 'E', 'B': False}),
+                ({'a(3.0, 3.0)', 'a(3.0, 2.0)'}, {'label': 'E', 'B': False}),
+                ({'a(3.0, 3.0)', 'a(4.0, 3.0)'}, {'label': 'E', 'B': False}),
+                ({'a(3.0, 3.0)', 'a(3.0, 4.0)'}, {'label': 'E', 'B': False}),
                 ({'a(2.0, 0.0)', 'v12', 'a(4.0, 2.0)', 'a(2.0, 2.0)'}, {'label': 'Q', 'R': False}),
-                ({'a(2.0, 2.0)', 'a(4.0, 2.0)', 'v13', 'a(2.0, 4.0)'}, {'label': 'Q', 'R': False}),
                 ({'a(0.0, 2.0)', 'v11', 'a(2.0, 0.0)', 'a(2.0, 2.0)'}, {'label': 'Q', 'R': False}),
                 ({'a(0.0, 2.0)', 'a(2.0, 2.0)', 'a(2.0, 4.0)', 'v14'}, {'label': 'Q', 'R': False}),
+                ({'a(3.0, 4.0)', 'a(3.0, 3.0)', 'v13', 'a(4.0, 3.0)'}, {'label': 'Q', 'R': False}),
+                ({'a(2.0, 4.0)', 'a(2.0, 3.0)', 'a(3.0, 3.0)', 'a(3.0, 4.0)'}, {'label': 'Q', 'R': False}),
+                ({'a(2.0, 2.0)', 'a(2.0, 3.0)', 'a(3.0, 3.0)', 'a(3.0, 2.0)'}, {'label': 'Q', 'R': False}),
+                ({'a(4.0, 3.0)', 'a(4.0, 2.0)', 'a(3.0, 3.0)', 'a(3.0, 2.0)'}, {'label': 'Q', 'R': False}),
             ]
         )
 

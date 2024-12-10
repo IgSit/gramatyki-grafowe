@@ -31,7 +31,7 @@ class P2(Production):
         inner_edges = [({new_node, middle_node_id}, {'label': 'E', 'B': False}) for new_node in new_nodes_ids] + [({self.hanging_node, middle_node_id}, {'label': 'E', 'B': False})]
         outer_edges = [({v, new_nodes_ids[i]}, {'label': 'E', 'B': graph.nx_graph.edges[*edge]['B']}) for i, edge in enumerate(subgraph_edges) for v in edge]
         hyper_edges = list(map(lambda x: (x, {'label': 'Q', 'R': False}), helper_dict.values()))
-        new_nodes = list(zip(new_nodes_ids, map(lambda x: {'pos':x[1], 'h':graph.nx_graph.edges[*x[0]]['B']}, new_nodes_pos))) + [(middle_node_id, {'pos':middle_node_pos, 'h':False})]
+        new_nodes = list(zip(new_nodes_ids, map(lambda x: {'pos':x[1], 'h': not graph.nx_graph.edges[*x[0]]['B']}, new_nodes_pos))) + [(middle_node_id, {'pos':middle_node_pos, 'h':False})]
         
         graph.shrink(nodes=[], edges=[
             set(neighbours), # remove hyperedge
