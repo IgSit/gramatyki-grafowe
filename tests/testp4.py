@@ -151,6 +151,9 @@ class TestP4(unittest.TestCase):
             if production.check(hyper_graph1, hyper_node):
                 hyper_graph1 = production.apply(hyper_graph1, hyper_node)
 
+
+        hyper_graph1.visualize()
+
         # then
         expected_graph = HyperGraph(
             nodes = [
@@ -230,10 +233,15 @@ class TestP4(unittest.TestCase):
                 ({"v11", "v10", "v15", "v14"}, {"label": "Q", "R": True}),
                 ({"v9", "v8", "v17", "v16"}, {"label": "Q", "R": True}),
                 ({"v8", "v7", "v18", "v17"}, {"label": "Q", "R": True}),
+
+                ({"v15", "v21", "v10", "v20"}, {"label": "Q", "R": False}),
+                ({"v3", "v19", "v10", "v20"}, {"label": "Q", "R": False}),
+                ({"v19", "v4", "v9", "v20"}, {"label": "Q", "R": False}),
+                ({"v20", "v9", "v16", "v21"}, {"label": "Q", "R": False}),
             ],
         )
 
-        expected_graph.visualize()
+        # expected_graph.visualize()
         self.assertTrue(
              nx.is_isomorphic(hyper_graph1.nx_graph, expected_graph.nx_graph)
         )

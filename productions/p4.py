@@ -39,6 +39,8 @@ class P4(Production):
                     continue
                 if v in neighbours:
                     continue
+                if not graph.is_hanging_node(v):
+                    continue
                 neighbours2.append(v)
 
         if len(neighbours2) != 2:
@@ -62,15 +64,16 @@ class P4(Production):
                     continue
                 if v in neighbours:
                     continue
+                if not graph.is_hanging_node(v):
+                    continue
                 neighbours2.append(v)
 
         neighbours2.sort()
         v5, v6 = neighbours2[0], neighbours2[1]
 
-        v2, v3 = graph.get_neighbours(v5)
-        v1 = [n for n in graph.get_neighbours(v2) if n not in (hyper_node, v5)][0]
-        v4 = [n for n in graph.get_neighbours(v3) if n not in (hyper_node, v5)][0]
-        v6 = [n for n in nx.common_neighbors(graph.nx_graph, v1, v4) if n != hyper_node][0]
+        v2, v3 = [n for n in graph.get_neighbours(v5) if n in neighbours]
+        v1 = [n for n in graph.get_neighbours(v2) if n in neighbours][0]
+        v4 = [n for n in graph.get_neighbours(v3) if n in neighbours][0]
 
         pos = graph.calculate_mean_node_position((v1, v2))
         v12 = (f"v{pos}", {"pos": pos})
