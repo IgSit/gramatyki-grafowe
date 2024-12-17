@@ -14,7 +14,7 @@ class P7(Production):
         if graph.is_breakable(hyper_node):
             return False
         neighbours = list(graph.get_neighbours(hyper_node))
-        return neighbours == 4
+        return len(neighbours) == 4
 
     def apply(self, graph: HyperGraph, hyper_node: str) -> HyperGraph:
         graph.set_node_attrs(hyper_node, {"label": "Q", "R": True})
