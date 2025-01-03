@@ -79,8 +79,8 @@ def compare_with_baseline(buffer, baseline_path):
 
 
 def compare_images(img1, img2):
-    img1_array = np.array(img1)
-    img2_array = np.array(img2)
+    img1_array = np.array(img1, dtype=np.int16)
+    img2_array = np.array(img2, dtype=np.int16)
 
     difference = np.abs(img1_array - img2_array)
     return not np.any(difference > 5)
