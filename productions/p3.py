@@ -79,10 +79,10 @@ class P3(Production):
         pos = graph.calculate_mean_node_position((v1, v2, v3, v4))
         v1234 = (f"v{pos}", {"pos": pos})
 
-        e_v1_v14 = ({v1, v14[0]}, {"B": graph.nx_graph.get_edge_data(v1, v4)["B"]})
-        e_v14_v4 = ({v14[0], v4}, {"B": graph.nx_graph.get_edge_data(v1, v4)["B"]})
-        e_v4_v34 = ({v4, v34[0]}, {"B": graph.nx_graph.get_edge_data(v3, v4)["B"]})
-        e_v34_v3 = ({v34[0], v3}, {"B": graph.nx_graph.get_edge_data(v3, v4)["B"]})
+        e_v1_v14 = ({v1, v14[0]}, {"B": graph.is_on_border((v1, v4))})
+        e_v14_v4 = ({v14[0], v4}, {"B": graph.is_on_border((v1, v4))})
+        e_v4_v34 = ({v4, v34[0]}, {"B": graph.is_on_border((v3, v4))})
+        e_v34_v3 = ({v34[0], v3}, {"B": graph.is_on_border((v3, v4))})
 
         e_v11_v1234 = ({v14[0], v1234[0]}, {})
         e_v34_v1234 = ({v34[0], v1234[0]}, {})
@@ -95,8 +95,8 @@ class P3(Production):
         graph.shrink(
             nodes=[],
             edges=[
-                (v1, v4),
-                (v4, v3),
+                {v1, v4},
+                {v4, v3},
                 neighbours  # remove hyperedge
             ]
         )
