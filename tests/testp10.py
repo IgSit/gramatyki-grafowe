@@ -247,10 +247,12 @@ class TestP10(unittest.TestCase):
             ]
         )
         nodes, edges = deepcopy(hyper_graph.nodes), deepcopy(hyper_graph.edges)
+        hyper_graph.visualize()
         applicable_nodes = [v for v in hyper_graph.hyper_nodes if self.prod.check(hyper_graph, v)]
         self.assertEqual(len(applicable_nodes), 1)
         self.assertEqual(len([n for n in hyper_graph.nodes if n[1]['h']]), 1)
         self.prod.apply(hyper_graph, applicable_nodes[0])
+        hyper_graph.visualize()
         for node in nodes:
             if node[1]['h']:
                 new_node = deepcopy(node)
@@ -271,6 +273,7 @@ class TestP10(unittest.TestCase):
         applicable_nodes = [v for v in hyper_graph.hyper_nodes if self.prod.check(hyper_graph, v)]
         self.assertEqual(len(applicable_nodes), 1)
         self.prod.apply(hyper_graph, applicable_nodes[0])
+        hyper_graph.visualize()
         self.assertEqual(len([n for n in hyper_graph.nodes if n[1]['h']]), 6)
 
         self.assertEqual(len(hyper_graph.edges), len(edges) + 32)
