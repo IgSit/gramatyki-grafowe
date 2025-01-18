@@ -58,19 +58,44 @@ if __name__ == '__main__':
 
     hyper_graph.visualize()
 
-    productions = [P21(), P9(), P7(), P8(), P2(), P3(), P1(), P7(), P8(), P2(), P3(), P1()]
+    productions = [(P21(), False, None),
+                   (P9(), True, None),
+                   (P7(), False, (2.5, 0.0)),
+                   (P8(), True, None),
+                   (P2(), True, None),
+                   (P3(), True, None),
+                   (P1(), True, None),
+                   (P7(), False, (3.375, 0.0)),
+                   (P8(), True, None),
+                   (P2(), True, None),
+                   (P3(), True, None),
+                   (P1(), True, None)
+                   ]
 
-    for production in productions:
-        changed = False
+    for production, rerun, preferred_node_pos in productions:
         initial = True
-        while changed or initial:
+        while initial or rerun:
             initial = False
             changed = False
             print(f"(Re)running check for {production.__class__.__name__}")
-            for hyper_node in hyper_graph.hyper_nodes:
+            hyper_nodes = hyper_graph.hyper_nodes
+            if preferred_node_pos:
+                idx = hyper_graph.hyper_positions.index(preferred_node_pos)
+                preferred_node = hyper_graph.hyper_nodes[idx]
+                if production.check(hyper_graph, preferred_node):
+                    print(f"Production {production.__class__.__name__} applied.")
+                    hyper_graph = production.apply(hyper_graph, preferred_node)
+                    hyper_graph.visualize()
+                    changed = True
+                    break
+            for hyper_node in hyper_nodes:
                 if production.check(hyper_graph, hyper_node):
                     print(f"Production {production.__class__.__name__} applied.")
                     hyper_graph = production.apply(hyper_graph, hyper_node)
                     hyper_graph.visualize()
                     changed = True
                     break
+            if not changed:
+                break
+
+    print(hyper_graph.hyper_positions)
