@@ -26,7 +26,7 @@ class P1(Production):
         )
 
     def check(self, graph: HyperGraph, hyper_node: str) -> bool:
-        neighbours = graph.get_neighbours(hyper_node)
+        neighbours = list(graph.get_neighbours(hyper_node))
         return self._is_square(graph, hyper_node, neighbours) and self._predicate(graph, hyper_node, neighbours)
 
     def apply(self, graph: HyperGraph, hyper_node: str) -> HyperGraph:
