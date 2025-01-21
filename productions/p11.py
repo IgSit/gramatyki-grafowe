@@ -49,7 +49,7 @@ class P11(Production):
             if (v not in ignored_vertices
                     and v not in hypernode_neigh_vertices
                     # we want only real vertices, not hyper-vertices if it's connected to any
-                    and v[0]=='v'
+                    and v[0]!='X'
                     and v not in unconnected_vertices):
                 unconnected_vertices.append(v)
 

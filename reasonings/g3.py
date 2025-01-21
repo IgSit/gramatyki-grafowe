@@ -1,4 +1,3 @@
-from fontTools.misc.cython import returns
 from matplotlib import pyplot as plt
 
 from graph.hypergraph import HyperGraph
@@ -50,15 +49,54 @@ if __name__ == "__main__":
             ({"v12", "v4", "v5", "v8"}, {"label": "Q", "R": False}),
             ({"v4", "v3", "v9", "v12"}, {"label": "Q", "R": False}),
             ({"v2", "v3", "v9", "v10"}, {"label": "Q", "R": False}),
-            ],
+        ],
     )
-
     starting_graph.visualize()
 
-    prod_list = [P7(), P1(), P7(), P8(), P22(), P2(), P11(), P1(), P7(), P8(), P8(), P2(), P3(), P1()]
+    brake_prods = [P2(), P11(), P3(), P1()]
+    make_breakable_probs = [P7()]
+    propagate_probs = [P8(), P22()]
 
-    for index, production in enumerate(prod_list):
-        for hyper_node in starting_graph.hyper_nodes:
-            if production.check(starting_graph, hyper_node):
-                hyper_graph = production.apply(starting_graph, hyper_node)
-                hyper_graph.visualize()
+
+    def prepare_plot(title):
+        fig, [ax_before, ax_after] = plt.subplots(1, 2, figsize=(32, 16), dpi=100)
+        ax_before.set_title("Before")
+        ax_after.set_title("After")
+        fig.suptitle(title)
+        return ax_before, ax_after
+
+
+    def try_apply(prod, h_nodes):
+        for h_node in h_nodes:
+            if prod.check(starting_graph, h_node):
+                ax_before, ax_after = prepare_plot(f"{prod.__class__.__name__} on {h_node}")
+                starting_graph.visualize(ax_before)
+                print(f"Applying production {prod.__class__.__name__} on hyper node {h_node}")
+                prod.apply(starting_graph, h_node)
+                starting_graph.visualize(ax_after)
+                plt.tight_layout()
+                plt.show()
+                return True
+        return False
+
+    def try_apply_list(prods, h_nodes):
+        for prod in prods:
+            if try_apply(prod, h_nodes):
+                return True
+        return False
+
+
+    while True:
+        hyper_node_to_break = input("Hyper node: ")
+
+        for h_node in starting_graph.hyper_nodes:
+            if h_node == hyper_node_to_break:
+                if try_apply_list(make_breakable_probs, [h_node]):
+                    break
+        else:
+            print(f"Couldn't make node '{hyper_node_to_break}' breakable")
+            break
+
+
+        while try_apply_list(propagate_probs, starting_graph.hyper_nodes) or try_apply_list(brake_prods, starting_graph.hyper_nodes) :
+            pass
