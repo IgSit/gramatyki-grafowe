@@ -84,10 +84,10 @@ class P3(Production):
         e_v4_v34 = ({v4, v34[0]}, {"B": graph.is_on_border((v3, v4))})
         e_v34_v3 = ({v34[0], v3}, {"B": graph.is_on_border((v3, v4))})
 
-        e_v11_v1234 = ({v14[0], v1234[0]}, {})
-        e_v34_v1234 = ({v34[0], v1234[0]}, {})
-        e_v5_v1234 = ({v5, v1234[0]}, {})
-        e_v6_v1234 = ({v6, v1234[0]}, {})
+        e_v11_v1234 = ({v14[0], v1234[0]}, {"B": False})
+        e_v34_v1234 = ({v34[0], v1234[0]}, {"B": False})
+        e_v5_v1234 = ({v5, v1234[0]}, {"B": False})
+        e_v6_v1234 = ({v6, v1234[0]}, {"B": False})
 
         graph.set_node_attrs(v5, {"h": False})
         graph.set_node_attrs(v6, {"h": False})

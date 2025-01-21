@@ -1,4 +1,7 @@
+from time import sleep
+
 from graph.hypergraph import HyperGraph
+from productions import P5, P4, P6, P10, P11, P12, P22
 from productions.p1 import P1
 from productions.p2 import P2
 from productions.p21 import P21
@@ -58,7 +61,7 @@ if __name__ == '__main__':
 
     hyper_graph.visualize()
 
-    productions = [(P21(), False, None),
+    productions = [(P21(), False, (0.0, 0.0)),
                    (P9(), True, None),
                    (P7(), False, (2.5, 0.0)),
                    (P8(), True, None),
@@ -66,36 +69,53 @@ if __name__ == '__main__':
                    (P3(), True, None),
                    (P1(), True, None),
                    (P7(), False, (3.375, 0.0)),
-                   (P8(), True, None),
-                   (P2(), True, None),
-                   (P3(), True, None),
-                   (P1(), True, None)
+                   (P4(), True, None),
+                   (P5(), True, None),
+                   (P6(), True, None),
+                   (P10(), True, None),
+                   (P11(), True, None),
+                   (P12(), True, None),
+                   (P22(), True, None),
                    ]
 
-    for production, rerun, preferred_node_pos in productions:
-        initial = True
-        while initial or rerun:
-            initial = False
-            changed = False
-            print(f"(Re)running check for {production.__class__.__name__}")
-            hyper_nodes = hyper_graph.hyper_nodes
-            if preferred_node_pos:
-                idx = hyper_graph.hyper_positions.index(preferred_node_pos)
-                preferred_node = hyper_graph.hyper_nodes[idx]
-                if production.check(hyper_graph, preferred_node):
-                    print(f"Production {production.__class__.__name__} applied.")
-                    hyper_graph = production.apply(hyper_graph, preferred_node)
-                    hyper_graph.visualize()
-                    changed = True
-                    break
-            for hyper_node in hyper_nodes:
-                if production.check(hyper_graph, hyper_node):
-                    print(f"Production {production.__class__.__name__} applied.")
-                    hyper_graph = production.apply(hyper_graph, hyper_node)
-                    hyper_graph.visualize()
-                    changed = True
-                    break
-            if not changed:
-                break
+    updated = True
+    while updated:
+        updated = False
+        print("Starting new iteration.")
+        for production, rerun, preferred_node_pos in productions:
+            initial = True
+            while (initial or rerun) and not updated:
+                initial = False
+                changed = False
+                print(f"(Re)running check for {production.__class__.__name__}")
+                hyper_nodes = hyper_graph.hyper_nodes
+                if preferred_node_pos:
+                    print(f"Preferred node position: {preferred_node_pos}")
+                    try:
+                        idx = hyper_graph.hyper_positions.index(preferred_node_pos)
+                        preferred_node = hyper_graph.hyper_nodes[idx]
+                        if production.check(hyper_graph, preferred_node):
+                            print(f"Production {production.__class__.__name__} applied.")
+                            hyper_graph = production.apply(hyper_graph, preferred_node)
+                            hyper_graph.visualize()
+                            changed = True
+                            updated = True
+                            break
+                    except ValueError:
+                        print(f"Preferred node not found.")
+                        pass
+                else:
+                    for i, hyper_node in enumerate(hyper_nodes):
+                        print(f"Checking node {hyper_node} for {production.__class__.__name__}")
+                        if production.check(hyper_graph, hyper_node):
+                            print(f"Production {production.__class__.__name__} applied.")
+                            hyper_graph = production.apply(hyper_graph, hyper_node)
+                            sleep(1)
+                            hyper_graph.visualize()
+                            changed = True
+                            break
+                    if not changed:
+                        print(f"No changes made by {production.__class__.__name__}.")
+                        break
 
-    print(hyper_graph.hyper_positions)
+    print("No more changes possible.")
