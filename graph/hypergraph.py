@@ -22,6 +22,8 @@ class HyperGraph:
                  edges: list[tuple[set[str], dict]]):
         self.nodes = nodes
         self.hyper_nodes = list()
+        self.hyper_positions = list()
+        self.hyper_dict = dict()
         self.edges = edges
         self._hyper_node_cnt = 0
 
@@ -96,7 +98,7 @@ class HyperGraph:
         positions = [self.nx_graph.nodes[n]['pos'] for n in nodes]
         return sum(p[0] for p in positions) / len(nodes), sum(p[1] for p in positions) / len(nodes)
 
-    def visualize(self) -> None:
+    def visualize(self, ax=None) -> None:
         node_colors = [('#84298a' if self.is_breakable(node) else '#f88fff') if self.is_hyper_node(node) else ('#1278a1' if self.is_hanging_node(node) else '#8fdfff') for node in self.nx_graph.nodes]
         edge_colors = ['#f88fff' if any(self.is_hyper_node(node) for node in edge) else ('#135210' if self.is_on_border(edge) else '#8fdfff')
                        for edge in self.nx_graph.edges]
@@ -105,9 +107,11 @@ class HyperGraph:
             nx.get_node_attributes(self.nx_graph, 'pos'),
             node_color=node_colors,
             edge_color=edge_colors,
-            with_labels=True
+            with_labels=True,
+            ax=ax
         )
-        plt.show()
+        if not ax:
+            plt.show()
         
     def save_figure_to_buffer(self, buffer) -> None:
         node_colors = [('#84298a' if self.is_breakable(node) else '#f88fff') if self.is_hyper_node(node) else ('#1278a1' if self.is_hanging_node(node) else '#8fdfff') for node in self.nx_graph.nodes]
@@ -170,8 +174,14 @@ class HyperGraph:
         for hyper_edge, attributes in hyper_edges:
             self._hyper_node_cnt += 1
             hyper_vertex_id = f"X{self._hyper_node_cnt}"
-            self.nx_graph.add_node(hyper_vertex_id, pos=self.calculate_mean_node_position(hyper_edge), **attributes)
-            self.hyper_nodes.append(hyper_vertex_id)
+            position = self.calculate_mean_node_position(hyper_edge)
+            self.nx_graph.add_node(hyper_vertex_id, pos=position, **attributes)
+            idx = 0
+            while len(self.hyper_nodes) > 0 and self.hyper_positions[idx][0] < position[0] and idx < len(self.hyper_nodes) - 1:
+                idx += 1
+            self.hyper_dict[hyper_vertex_id] = position
+            self.hyper_positions.insert(idx, position)
+            self.hyper_nodes.insert(idx, hyper_vertex_id)
             self.nx_graph.add_edges_from([(hyper_vertex_id, v, attributes) for v in hyper_edge])
 
     def _remove_hyper_edges(self, hyper_edges) -> None:
@@ -179,6 +189,9 @@ class HyperGraph:
             hyper_vertex_id = self._find_hyper_node(hyper_edge)
             self.nx_graph.remove_node(hyper_vertex_id)
             self.hyper_nodes.remove(hyper_vertex_id)
+            position = self.hyper_dict[hyper_vertex_id]
+            self.hyper_dict.pop(hyper_vertex_id)
+            self.hyper_positions.remove(position)
     
     def _find_hyper_node(self, hyper_edge) -> str:
         for hyper_node in self.hyper_nodes:
