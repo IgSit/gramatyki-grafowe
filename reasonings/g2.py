@@ -1,8 +1,5 @@
 from graph.hypergraph import HyperGraph
-from productions.p1 import P1
-from productions.p2 import P2
-from productions.p7 import P7
-from productions.p8 import P8
+from productions import *
 import networkx as nx
 from matplotlib import pyplot as plt
 
@@ -70,9 +67,9 @@ def try_apply_prods(prods, hyper_node):
             return True
     return False
 
-break_prods = [P1(), P2()]
-set_break_prods = [P7()]
-propagate_prods = [P8()]
+break_prods = [P1(), P2(), P3(), P4(), P5(), P6(), P9(), P10(), P11(), P12()]
+set_break_prods = [P7(), P21()]
+propagate_prods = [P8(), P22()]
 
 hyper_graph.visualize()
 
@@ -84,3 +81,4 @@ while True:
               for prods in [propagate_prods, break_prods] \
               for h in hyper_graph.hyper_nodes):
         pass
+
