@@ -1,5 +1,7 @@
 import random
 import networkx as nx
+from multiprocessing import Pool, cpu_count
+from functools import partial
 
 
 def read_graph(filename):
@@ -20,8 +22,11 @@ def karger_min_cut(nodes, edges):
 
     while len(vertices) > 2:
         u, v = random.choice(edges_current)
+        if v not in vertices or u not in vertices:
+            continue
         vertices[u].extend(vertices[v])
         del vertices[v]
+
         new_edges = []
         for x, y in edges_current:
             if x == v: x = u
@@ -33,22 +38,23 @@ def karger_min_cut(nodes, edges):
     return len(edges_current)
 
 
-def estimate_min_cut(nodes, edges, iterations=100):
-    best_cut = float('inf')
-    cuts_found = 0
-    total_iters_to_best = 0
+def run_single_karger(nodes, edges, seed=None):
+    if seed is not None:
+        random.seed(seed)
+    return karger_min_cut(nodes, edges)
 
-    for i in range(1, iterations + 1):
-        cut = karger_min_cut(nodes, edges)
-        if cut < best_cut:
-            best_cut = cut
-            cuts_found = 1
-            total_iters_to_best = i
-        elif cut == best_cut:
-            cuts_found += 1
-            total_iters_to_best = (total_iters_to_best * (cuts_found - 1) + i) / cuts_found
 
-    return best_cut, total_iters_to_best
+def estimate_min_cut_parallel(nodes, edges, iterations=100):
+    with Pool(processes=cpu_count()) as pool:
+        seeds = [random.randint(0, 1_000_000) for _ in range(iterations)]
+        func = partial(run_single_karger, nodes, edges)
+        results = pool.map(func, seeds)
+
+    best_cut = min(results)
+    indices = [i+1 for i, cut in enumerate(results) if cut == best_cut]
+    avg_iter = sum(indices) / len(indices)
+
+    return best_cut, avg_iter
 
 
 def optimal_min_cut_networkx(nodes, edges):
@@ -56,7 +62,7 @@ def optimal_min_cut_networkx(nodes, edges):
     graph.add_nodes_from(nodes)
     graph.add_edges_from(edges)
 
-    cut_value, partition = nx.algorithms.connectivity.stoer_wagner(graph)
+    cut_value, _ = nx.algorithms.connectivity.stoer_wagner(graph)
     return cut_value
 
 
@@ -70,7 +76,7 @@ def main():
     opt = optimal_min_cut_networkx(nodes, edges)
 
     iterations = 200
-    est_cut, avg_iter = estimate_min_cut(nodes, edges, iterations)
+    est_cut, avg_iter = estimate_min_cut_parallel(nodes, edges, iterations)
 
     print(f"{name} ({n}, {m}) {opt} {avg_iter:.2f}")
 
