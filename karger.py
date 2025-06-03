@@ -1,8 +1,6 @@
 import random
 import math
 import networkx as nx
-from multiprocessing import Pool, cpu_count
-from functools import partial
 
 
 def read_graph(filename):
@@ -66,7 +64,6 @@ def karger_stein_weighted(nodes, edges):
 
     cut1 = karger_stein_weighted(nodes1, edges1)
     cut2 = karger_stein_weighted(nodes2, edges2)
-
     return min(cut1, cut2)
 
 
@@ -100,15 +97,20 @@ def run_single_weighted(nodes, edges, seed=None):
 
 
 def estimate_min_cut_parallel(nodes, edges, iterations=100):
-    with Pool(processes=cpu_count()) as pool:
-        seeds = [random.randint(0, 1_000_000) for _ in range(iterations)]
-        func = partial(run_single_weighted, nodes, edges)
-        results = pool.map(func, seeds)
+    print("Estimating minimum cut with", iterations, "iterations...")
+    results = []
+    best_result = float('inf')
+    for _ in range(iterations):
+        seed = random.randint(0, 1_000_000)
+        res = run_single_weighted(nodes, edges, seed)
+        if res < best_result:
+            best_result = res
+            print("New best result found:", best_result)
+        results.append(res)
 
     best_cut = min(results)
     indices = [i+1 for i, cut in enumerate(results) if cut == best_cut]
     avg_iter = sum(indices) / len(indices)
-
     return best_cut, avg_iter
 
 
@@ -136,10 +138,17 @@ def process_graph_worker(filename, result_queue):
 
         iterations = 100
         est_cut, avg_iter = estimate_min_cut_parallel(nodes, edges, iterations)
-        print(f"{name} ({n}, {m}) {opt} {avg_iter:.2f}")
-        result_queue.put([name, n, m, opt, est_cut, round(avg_iter, 2)])
+        result_queue.put({
+            "name": name, "n": n, "m": m, "opt": opt,
+            "est_cut": est_cut, "avg_iter": round(avg_iter, 2),
+            "status": "OK"
+        })
     except Exception as e:
-        result_queue.put([filename, "ERROR", "ERROR", "ERROR", "ERROR", str(e)])
+        result_queue.put({
+            "name": filename, "n": "ERROR", "m": "ERROR",
+            "opt": "ERROR", "est_cut": "ERROR", "avg_iter": str(e),
+            "status": "ERROR"
+        })
 
 
 def process_graph_with_timeout(filename, timeout_seconds=1800):
@@ -152,12 +161,27 @@ def process_graph_with_timeout(filename, timeout_seconds=1800):
         p.terminate()
         p.join()
         print(f"{filename} timed out after {timeout_seconds} seconds.")
-        return [filename, "TIMEOUT", "TIMEOUT", "TIMEOUT", "TIMEOUT", "TIMEOUT"]
+
+        if not result_queue.empty():
+            partial = result_queue.get()
+            return [
+                partial["name"], partial.get("n", "TIMEOUT"), partial.get("m", "TIMEOUT"),
+                "UNKNOWN",
+                partial.get("est_cut", "TIMEOUT"),
+                partial.get("avg_iter", "TIMEOUT")
+            ]
+        else:
+            return [filename, "TIMEOUT", "TIMEOUT", "TIMEOUT", "TIMEOUT", "TIMEOUT"]
 
     if result_queue.empty():
         return [filename, "ERROR", "ERROR", "ERROR", "ERROR", "NO_RESULT"]
 
-    return result_queue.get()
+    result = result_queue.get()
+    return [
+        result["name"], result["n"], result["m"], result["opt"],
+        result["est_cut"], result["avg_iter"]
+    ]
+
 
 
 def main():
@@ -174,7 +198,7 @@ def main():
                 writer.writerow([fname, "MISSING", "MISSING", "MISSING", "MISSING", "MISSING"])
                 continue
 
-            result = process_graph_with_timeout(fname, timeout_seconds=1800)
+            result = process_graph_with_timeout(fname, timeout_seconds=60*15)
             writer.writerow(result)
             print("Processed:", result[0])
 
